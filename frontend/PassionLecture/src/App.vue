@@ -9,12 +9,12 @@
 <script>
 import { RouterLink, RouterView } from 'vue-router'
 import Footer from './components/Footer.vue'
-//import Header from "./components/Header.vue";
+import Header from './components/Header.vue'
 
 export default {
   name: 'App',
   components: {
-    //Header,
+    Header,
     Footer,
   },
 }
