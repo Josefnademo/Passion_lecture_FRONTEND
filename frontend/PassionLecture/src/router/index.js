@@ -16,7 +16,7 @@ const router = createRouter({
       // which will be (lazy-loaded)loaded only when this route is visited
       component: () => import('../views/AboutView.vue'),
     },
-    {
+    /* {
       path: '/search',
       name: 'Search',
       component: () => import('../views/SearchView.vue'),
@@ -45,7 +45,7 @@ const router = createRouter({
       path: '/books',
       name: 'Books',
       component: () => import('../views/BooksView.vue'),
-    },
+    }, */
   ],
 })
 
