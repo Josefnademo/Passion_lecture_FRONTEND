@@ -16,6 +16,36 @@ const router = createRouter({
       // which will be (lazy-loaded)loaded only when this route is visited
       component: () => import('../views/AboutView.vue'),
     },
+    {
+      path: '/search',
+      name: 'Search',
+      component: () => import('../views/SearchView.vue'),
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/LoginView.vue'),
+    },
+    {
+      path: '/details',
+      name: 'Details',
+      component: () => import('../views/DetailsView.vue'),
+    },
+    {
+      path: '/account',
+      name: 'Account',
+      component: () => import('../views/AccountView.vue'),
+    },
+    {
+      path: '/category',
+      name: 'Category',
+      component: () => import('../views/CategoryView.vue'),
+    },
+    {
+      path: '/books',
+      name: 'Books',
+      component: () => import('../views/BooksView.vue'),
+    },
   ],
 })
 
