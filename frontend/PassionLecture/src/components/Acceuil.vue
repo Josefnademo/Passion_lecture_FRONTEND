@@ -1,9 +1,9 @@
-<script setup>
-import AppFooter from './Footer.vue'
-import AppHeader from './Header.vue'
-</script>
+<script setup></script>
 
 <template>
-  <AppHeader />
-  <AppFooter />
+  <h1>Home</h1>
+  <h2>
+    Passion Lecture is a site for book lovers who love reading and who know how to read books full
+    of pages composed of sentences themselves composed of a string of diverse and varied words.
+  </h2>
 </template>
