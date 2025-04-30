@@ -1,7 +1,17 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+</script>
+
+<script>
+const dropMenu = '../../public/images/Group 36.png'
+</script>
+
 <template>
   <header class="app-header">
     <div class="left-section">
-      <button class="icon-button">☰</button>
+      <div class="icon-button" @click="toggleSelect('categorie')">
+        <img :src="dropMenu" class="logo" />
+      </div>
     </div>
     <h1 class="header-title">
       <span class="title-main">Passion</span>
@@ -13,12 +23,6 @@
   </header>
 </template>
 
-<script>
-export default {
-  name: 'AppHeader',
-}
-</script>
-
 <style scoped>
 .app-header {
   background-color: #3c5a78;
@@ -27,7 +31,7 @@ export default {
   left: 0;
   right: 0;
   width: 100%;
-  color: white;
+  color: #f5ffed;
   padding: 10px 20px;
   z-index: 100;
   display: flex;
@@ -47,12 +51,13 @@ export default {
 }
 
 .icon-button {
-  background-color: #b1d9bc;
+  background-color: #3c5a78;
   border: none;
-  border-radius: 50%;
-  padding: 8px 12px;
-  font-size: 1.2rem;
-  cursor: pointer;
+  transform: none;
+}
+
+.logo {
+  width: 2.5em;
 }
 
 .user-button {
@@ -73,7 +78,7 @@ export default {
 }
 
 .title-tag {
-  background-color: #b1d9bc;
+  background-color: #b3dec1;
   color: #1a3c5a;
   padding: 2px 6px;
   border-radius: 6px;
