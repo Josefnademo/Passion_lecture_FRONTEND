@@ -12,10 +12,39 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
+      // Dynamic import creates a separate file (chunk)
+      // which will be (lazy-loaded)loaded only when this route is visited
       component: () => import('../views/AboutView.vue'),
+    },
+    {
+      path: '/search',
+      name: 'Search',
+      component: () => import('../views/SearchView.vue'),
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('../views/LoginView.vue'),
+    },
+    {
+      path: '/details',
+      name: 'Details',
+      component: () => import('../views/DetailsView.vue'),
+    },
+    {
+      path: '/account',
+      name: 'Account',
+      component: () => import('../views/AccountView.vue'),
+    },
+    {
+      path: '/category',
+      name: 'Category',
+      component: () => import('../views/CategoryView.vue'),
+    },
+    {
+      path: '/books',
+      name: 'Books',
+      component: () => import('../views/BooksView.vue'),
     },
   ],
 })
