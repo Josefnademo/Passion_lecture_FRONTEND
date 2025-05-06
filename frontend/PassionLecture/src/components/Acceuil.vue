@@ -68,6 +68,13 @@ onMounted(async () => {
   padding: 20px;
   font-family: 'Arial', sans-serif;
 }
+.book-cover {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
 
 .hero-section {
   text-align: center;
