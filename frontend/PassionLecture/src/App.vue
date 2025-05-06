@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <Header></Header>
-    <RouterView />
+    <main class="main-content">
+      <RouterView />
+    </main>
     <Footer></Footer>
   </div>
 </template>
@@ -21,6 +23,16 @@ export default {
 </script>
 
 <style>
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
 /* Error message styling */
 .erreur {
   color: #e53935;

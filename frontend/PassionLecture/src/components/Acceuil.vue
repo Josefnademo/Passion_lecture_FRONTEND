@@ -63,10 +63,9 @@ onMounted(async () => {
 
 <style scoped>
 .accueil-container {
-  max-width: 1200px;
+  max-width: 1920px;
   margin: 0 auto;
   padding: 20px;
-  padding-bottom: 100px; /* Добавлен отступ, чтобы футер не перекрывал контент */
   font-family: 'Arial', sans-serif;
 }
 

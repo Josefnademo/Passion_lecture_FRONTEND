@@ -1,5 +1,5 @@
 <template>
-  <footer>
+  <footer class="site-footer">
     <h1 class="footer-title">Passion Lecture</h1>
     <div class="footer-content">
       <div class="footer-section">
@@ -29,25 +29,25 @@ export default {
 </script>
 
 <style scoped>
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
+h1 {
+  text-align: center;
+  color: #f5ffed;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.site-footer {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
   background-color: #b6e1c6;
   color: white;
   padding: 20px 0;
-  z-index: 100;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.footer-title {
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #f5ffed;
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .footer-content {
@@ -90,7 +90,6 @@ footer {
 
 .contact-list a:hover {
   color: #2c3e50;
-  text-decoration: underline;
   border-radius: 5%;
 }
 
