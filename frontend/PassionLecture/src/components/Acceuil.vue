@@ -40,14 +40,24 @@ import { useRouter } from 'vue-router'
 // Initialize the router
 const router = useRouter()
 
-// Book data (in a real application it will be loaded from API)
-const books = ref([
-  { title: 'Book Title 1', author: 'Author 1' },
-  { title: 'Book Title 2', author: 'Author 2' },
-  { title: 'Book Title 3', author: 'Author 3' },
-  { title: 'Book Title 4', author: 'Author 4' },
-  { title: 'Book Title 5', author: 'Author 5' },
-])
+const loading = ref(true)
+const books = ref([])
+
+// Book data loading from API
+onMounted(() => {
+  // Fetch books from API
+  fetch('http://localhost:9999/api/books')
+    .then((response) => response.json())
+    .then((apiBooks) => {
+      books.value = apiBooks
+    })
+    .catch((error) => {
+      console.error('Error loading books:', error)
+    })
+    .finally(() => {
+      loading.value = false
+    })
+})
 
 // In real application:
 // onMounted(async () => {
