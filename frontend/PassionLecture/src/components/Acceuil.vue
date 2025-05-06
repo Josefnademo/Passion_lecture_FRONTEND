@@ -40,30 +40,25 @@ import { useRouter } from 'vue-router'
 // Initialize the router
 const router = useRouter()
 
+// Define the loading state and books array waitung for data to be loaded
 const loading = ref(true)
 const books = ref([])
 
 // Book data loading from API
-onMounted(() => {
+onMounted(async () => {
   // Fetch books from API
-  fetch('http://localhost:9999/api/books')
-    .then((response) => response.json())
-    .then((apiBooks) => {
-      books.value = apiBooks
-    })
-    .catch((error) => {
-      console.error('Error loading books:', error)
-    })
-    .finally(() => {
-      loading.value = false
-    })
-})
 
-// In real application:
-// onMounted(async () => {
-//   const response = await fetch('/api/books/latest')
-//   books.value = await response.json()
-// })
+  try {
+    const response = await fetch('http://localhost:9999/api/books')
+    const result = await response.json()
+    // If the response has the structure { message: "...", data: [...] }
+    books.value = result.data
+  } catch (error) {
+    console.error('Error loading books:', error)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style scoped>
@@ -71,6 +66,7 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  padding-bottom: 100px; /* Добавлен отступ, чтобы футер не перекрывал контент */
   font-family: 'Arial', sans-serif;
 }
 
@@ -153,45 +149,6 @@ onMounted(() => {
   font-size: 0.9rem;
 }
 
-.site-footer {
-  background-color: #b6e1c6;
-  color: white;
-  padding: 30px;
-  border-radius: 8px;
-  margin-top: 50px;
-}
-
-.site-footer h3 {
-  text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
-
-.footer-section {
-  text-align: center;
-  margin: 10px;
-}
-
-.footer-section h4 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-}
-
-.footer-section a {
-  color: white;
-  text-decoration: none;
-}
-
-.footer-section a:hover {
-  text-decoration: underline;
-}
-
 @media (max-width: 768px) {
   .quick-links {
     flex-direction: column;
@@ -200,11 +157,6 @@ onMounted(() => {
 
   .books-grid {
     grid-template-columns: 1fr;
-  }
-
-  .footer-content {
-    flex-direction: column;
-    align-items: center;
   }
 
   .book-cover {

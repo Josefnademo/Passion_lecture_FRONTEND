@@ -1,5 +1,6 @@
 import express from "express";
 import { sequelize, initDb, Book } from "./db/sequelize.js";
+import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
 import bookRouter from "./routes/books/books.js";
@@ -11,6 +12,7 @@ import userRouter from "./routes/users/users.js";
 import loginRouter from "./routes/auth/login.js";
 
 const app = express();
+app.use(cors()); // ← allows all origins (including http://localhost:5173)
 app.use(express.json());
 const port = 9999;
 
