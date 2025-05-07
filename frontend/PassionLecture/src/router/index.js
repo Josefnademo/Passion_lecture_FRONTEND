@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path: '/about',
@@ -15,6 +14,16 @@ const router = createRouter({
       // Dynamic import creates a separate file (chunk)
       // which will be (lazy-loaded)loaded only when this route is visited
       component: () => import('../views/AboutView.vue'),
+    },
+    {
+      path: '/categories',
+      name: 'categories',
+      component: () => import('../views/CategoryView.vue'),
+    },
+    {
+      path: '/categories/:categorie_id/books',
+      name: 'bookByCategory',
+      component: () => import('../views/BookByCategoryView.vue'),
     },
     /* {
       path: '/search',
@@ -36,11 +45,7 @@ const router = createRouter({
       name: 'Account',
       component: () => import('../views/AccountView.vue'),
     },
-    {
-      path: '/category',
-      name: 'Category',
-      component: () => import('../views/CategoryView.vue'),
-    },
+
     {
       path: '/books',
       name: 'Books',
