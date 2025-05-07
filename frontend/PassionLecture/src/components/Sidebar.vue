@@ -60,19 +60,19 @@ export default defineComponent({
         name: 'Create',
         href: '/create',
         icon: mockIcons.Edit,
-        iconImage: '../../public/images/Group 45.png',
+        iconImage: '../../public/images/createBook.png',
       },
       {
         name: 'Categories',
         href: '/categories',
         icon: mockIcons.Layers,
-        iconImage: '../../public/images/Group 44.png',
+        iconImage: '../../public/images/categories.png',
       },
       {
         name: 'My Books',
         href: '/my-books',
         icon: mockIcons.BookOpen,
-        iconImage: '../../public/images/Group 54.png',
+        iconImage: '../../public/images/myBooks.png',
       },
     ]
 

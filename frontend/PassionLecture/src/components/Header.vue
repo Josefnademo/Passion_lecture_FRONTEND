@@ -7,7 +7,7 @@
       <h1 class="logo-text">Passion <span class="logo-highlight">Lecture</span></h1>
     </router-link>
     <router-link to="/profile" class="profile-link">
-      <img src="/images/Group 48.png" class="user-icon" alt="User Profile" />
+      <img src="/images/userProfile.png" class="user-icon" alt="User Profile" />
     </router-link>
     <Sidebar
       v-if="sidebarOpen && isSidebarAvailable"
@@ -23,7 +23,7 @@ import { ref, onMounted, computed } from 'vue'
 // import { Menu, User } from 'lucide-vue-next'
 import Sidebar from './Sidebar.vue'
 
-const dropMenu = '../../public/images/Group 36.png'
+const dropMenu = '/images/dropMenu.png'
 const sidebarOpen = ref(false)
 const isSidebarAvailable = computed(() => !!Sidebar)
 
