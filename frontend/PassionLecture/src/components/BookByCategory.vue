@@ -2,13 +2,20 @@
   <div class="accueil-container">
     <!-- Books section -->
     <section class="books-section">
-      <h3 class="section-title">Categories</h3>
+      <h3 class="section-title">Latest Books</h3>
       <div v-if="loading" class="loading">Loading...</div>
       <div v-else class="books-grid">
-        <div v-for="categorie in categories" :key="categorie.categorie_id" class="book-card">
-          <RouterLink :to="'/categories/${categorie.categorie_id}/books'"
-            ><h4 class="book-title">{{ categorie.nom }}</h4></RouterLink
-          >
+        <div v-for="book in books" :key="book.livre_id" class="book-card">
+          <img v-if="book.lien_image" :src="book.lien_image" :alt="book.titre" class="book-cover" />
+          <div class="book-info">
+            <h4 class="book-title">{{ book.titre }}</h4>
+            <p class="book-author" v-if="book.writer">
+              {{ book.writer.nom }} {{ book.writer.prenom }}
+            </p>
+            <p class="book-category" v-if="book.category">
+              {{ book.category.nom }}
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -18,24 +25,28 @@
 <script setup>
 // We import the necessary functions
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { RouterLink, RouterView } from 'vue-router'
 
-// Initialize the router
-const router = useRouter()
+const route = useRoute()
+const categorieId = route.params.categorie_id
+console.log(categorieId)
 
 // Define the loading state and books array waitung for data to be loaded
 const loading = ref(true)
-const Books = ref([])
+const books = ref([])
 
 // Book data loading from API
 onMounted(async () => {
   // Fetch books from API
   try {
-    const response = await fetch('http://localhost:9999/api/categories/${id}/books')
+    const response = await fetch(`http://localhost:9999/api/categories/${categorieId}/books`)
     const result = await response.json()
+    console.log(result)
     // If the response has the structure { message: "...", data: [...] }
-    Books.value = result.data
+    books.value = result.data
+    console.log('toto')
+    console.log(books)
   } catch (error) {
     console.error('Error loading categories:', error)
   } finally {

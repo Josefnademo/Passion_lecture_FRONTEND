@@ -6,7 +6,7 @@
       <div v-if="loading" class="loading">Loading...</div>
       <div v-else class="books-grid">
         <div v-for="categorie in categories" :key="categorie.categorie_id" class="book-card">
-          <RouterLink :to="'/categories/${categorie.categorie_id}/books'"
+          <RouterLink :to="`/categories/${categorie.categorie_id}/books`"
             ><h4 class="book-title">{{ categorie.nom }}</h4></RouterLink
           >
         </div>

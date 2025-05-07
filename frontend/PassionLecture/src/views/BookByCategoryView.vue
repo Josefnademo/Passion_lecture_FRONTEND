@@ -4,6 +4,6 @@ import AppBookByCategory from '../components/BookByCategory.vue'
 
 <template>
   <main>
-    <AppCategory />
+    <AppBookByCategory />
   </main>
 </template>

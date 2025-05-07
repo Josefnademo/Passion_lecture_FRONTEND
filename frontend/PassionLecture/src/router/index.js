@@ -25,6 +25,11 @@ const router = createRouter({
       name: 'bookByCategory',
       component: () => import('../views/BookByCategoryView.vue'),
     },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: () => import('../components/Profile.vue'),
+    },
     /* {
       path: '/search',
       name: 'Search',
@@ -39,17 +44,13 @@ const router = createRouter({
       path: '/details',
       name: 'Details',
       component: () => import('../views/DetailsView.vue'),
-    },*/
-    {
-      path: '/profile',
-      name: 'Profile',
-      component: () => import('../components/Profile.vue'),
     },
+
     {
       path: '/books',
       name: 'Books',
       component: () => import('../views/BooksView.vue'),
-    },
+    },*/
   ],
 })
 
