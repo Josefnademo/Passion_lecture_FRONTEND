@@ -30,6 +30,11 @@ const router = createRouter({
       name: 'Profile',
       component: () => import('../components/Profile.vue'),
     },
+    {
+      path: '/details',
+      name: 'Details',
+      component: () => import('../components/DetailsView.vue'),
+    },
     /* {
       path: '/search',
       name: 'Search',
@@ -39,11 +44,6 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('../views/LoginView.vue'),
-    },
-    {
-      path: '/details',
-      name: 'Details',
-      component: () => import('../views/DetailsView.vue'),
     },
 
     {
