@@ -31,6 +31,8 @@ export default {
 
 .main-content {
   flex: 1;
+  max-width: 4000px;
+  margin: 0 auto;
 }
 
 /* Error message styling */
