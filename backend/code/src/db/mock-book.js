@@ -10,6 +10,7 @@ let books = [
     nombre_de_page: 336,
     category_id: 3,
     writer_id: 2,
+    user_id: 4,
   },
   {
     titre: "Project Hail Mary",
@@ -22,6 +23,7 @@ let books = [
     nombre_de_page: 496,
     category_id: 1,
     writer_id: 3,
+    user_id: 4,
   },
   {
     titre: "Atomic Habits",
@@ -33,6 +35,7 @@ let books = [
     nombre_de_page: 320,
     category_id: 4,
     writer_id: 4,
+    user_id: 4,
   },
   {
     titre: "The Midnight Library",
@@ -45,6 +48,7 @@ let books = [
     nombre_de_page: 304,
     category_id: 3,
     writer_id: 5,
+    user_id: 4,
   },
   {
     titre: "Sapiens: A Brief History of Humankind",
@@ -57,6 +61,7 @@ let books = [
     nombre_de_page: 512,
     category_id: 5,
     writer_id: 1,
+    user_id: 4,
   },
 ];
 

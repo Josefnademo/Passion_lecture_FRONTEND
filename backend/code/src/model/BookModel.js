@@ -82,6 +82,15 @@ const BookModel = (sequelize) => {
           key: "ecrivain_id",
         },
       },
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        default: 1,
+        references: {
+          model: "t_user",
+          key: "utilisateur_id",
+        },
+      },
     },
     {
       timestamps: true,

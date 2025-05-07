@@ -39,13 +39,33 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { RouterLink, RouterView } from 'vue-router'
+
+// Initialize the router
+const router = useRouter()
 
 // Reactive data
-const name = ref('Albert')
-const booksAdded = ref(12)
-const commentsCount = ref(24)
-const memberSince = ref('January 2023')
+/*const name = ref(null)
+const booksAdded = ref(null)
+const commentsCount = ref(null)
+const memberSince = ref(null)*/
+const profile = ref(null)
+
+onMounted(async () => {
+  // Fetch books from API
+  try {
+    const response = await fetch(`http://localhost:9999/api/categories/${categorieId}/books`)
+    const result = await response.json()
+    // If the response has the structure { message: "...", data: [...] }
+    books.value = result.data
+  } catch (error) {
+    console.error('Error loading categories:', error)
+  } finally {
+    loading.value = false
+  }
+})
 
 // Methods
 const editProfile = () => {

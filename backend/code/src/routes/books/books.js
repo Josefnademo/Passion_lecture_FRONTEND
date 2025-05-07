@@ -199,4 +199,7 @@ router.put("/:id", bookController.updateBook);
  *         description: Server error
  */
 router.delete("/:id", bookController.deleteBook);
+
+router.get("/:id/user", bookController.getBookByUserId);
+
 export default router;

@@ -1,8 +1,24 @@
-import {sequelize, Book, Evaluate} from "../db/sequelize.js";
+import { sequelize, Book, Evaluate } from "../db/sequelize.js";
 import { Op } from "sequelize";
 import { success } from "../helper.js";
 
 const bookController = {
+  async getBookByUserId(req, res) {
+    try {
+      const books = await sequelize.models.t_livre.findAll({
+        where: { user_id: req.params.id },
+      });
+      return res.json(
+        success(`Books by user${req.params.id} retrieved successfully`, books)
+      );
+    } catch (error) {
+      res.status(500).json({
+        message: "Error happend while we tried to retrieve your books",
+        data: error,
+      });
+    }
+  },
+
   // Create a new book
   async createBook(req, res) {
     try {
@@ -82,17 +98,17 @@ const bookController = {
   // Delete a book
   async deleteBook(req, res) {
     const t = await sequelize.transaction();
-  
+
     try {
       const bookId = req.params.id;
-  
+
       // Check if user exists
       const book = await Book.findByPk(bookId);
       if (!book) {
         await t.rollback();
         return res.status(404).json({ message: "User not found" });
       }
-  
+
       // Delete all evaluations by this user
       await Evaluate.destroy({
         where: { book_id: bookId },
@@ -103,7 +119,7 @@ const bookController = {
         where: { livre_id: bookId },
         transaction: t,
       });
-  
+
       await t.commit();
       res.json({
         message: "Book and associated evaluations deleted successfully",
@@ -116,7 +132,7 @@ const bookController = {
         error: error.message,
       });
     }
-  }
+  },
 };
 
 export default bookController;

@@ -25,9 +25,9 @@
 <script setup>
 // We import the necessary functions
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import { RouterLink, RouterView } from 'vue-router'
 
+import { useRoute } from 'vue-router'
 const route = useRoute()
 const categorieId = route.params.categorie_id
 console.log(categorieId)
@@ -42,11 +42,8 @@ onMounted(async () => {
   try {
     const response = await fetch(`http://localhost:9999/api/categories/${categorieId}/books`)
     const result = await response.json()
-    console.log(result)
     // If the response has the structure { message: "...", data: [...] }
     books.value = result.data
-    console.log('toto')
-    console.log(books)
   } catch (error) {
     console.error('Error loading categories:', error)
   } finally {

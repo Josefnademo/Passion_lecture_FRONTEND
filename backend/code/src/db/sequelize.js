@@ -71,6 +71,7 @@ const importBooks = () => {
           nombre_de_page: book.nombre_de_page,
           category_id: book.category_id,
           writer_id: book.writer_id,
+          user_id: book.user_id,
           lien_image: book.lien_image,
           lien_pdf: book.lien_pdf,
           resume: book.resume,
