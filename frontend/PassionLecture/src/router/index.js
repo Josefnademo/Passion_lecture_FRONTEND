@@ -30,13 +30,13 @@ const router = createRouter({
       path: '/details',
       name: 'Details',
       component: () => import('../views/DetailsView.vue'),
-    },
+    },*/
     {
-      path: '/account',
-      name: 'Account',
-      component: () => import('../views/AccountView.vue'),
+      path: '/profile',
+      name: 'Profile',
+      component: () => import('../components/Profile.vue'),
     },
-    {
+    /*{
       path: '/category',
       name: 'Category',
       component: () => import('../views/CategoryView.vue'),
