@@ -27,6 +27,7 @@ const bookController = {
         .status(201)
         .json(success(`Le livre ${book.titre} a bien été créé !`, book));
     } catch (error) {
+      console.log("❌ Error in createBook:", error);
       res
         .status(500)
         .json({ message: "Erreur lors de la création du livre.", data: error });

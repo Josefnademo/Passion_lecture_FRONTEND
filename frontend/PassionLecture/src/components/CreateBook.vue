@@ -1,71 +1,58 @@
 <template>
-  <div class="add-book-container">
-    <h1 class="title">Add a New Book</h1>
-    <form @submit.prevent="submitBook" class="add-book-form">
-      <label for="title">Book Title</label>
-      <input v-model="title" type="text" id="title" placeholder="Enter book title" required />
-
-      <label for="year">Year of Edition</label>
-      <input
-        v-model.number="year"
-        type="number"
-        id="year"
-        placeholder="Enter year of edition"
-        required
-      />
-
-      <label for="pages">Number of Pages</label>
-      <input
-        v-model.number="pages"
-        type="number"
-        id="pages"
-        placeholder="Enter number of pages"
-        required
-      />
-
-      <label for="category">Category ID</label>
-      <input
-        v-model.number="category"
-        type="number"
-        id="category"
-        placeholder="Enter category ID"
-        required
-      />
-
-      <label for="writer">Writer ID</label>
-      <input
-        v-model.number="writer"
-        type="number"
-        id="writer"
-        placeholder="Enter writer ID"
-        required
-      />
-
-      <button type="submit" class="submit-btn">Add Book</button>
+  <div class="form-container">
+    <h2>Add New Book</h2>
+    <form @submit.prevent="submitBook">
+      <input v-model="title" type="text" placeholder="Book's title" required />
+      <input v-model.number="year" type="number" placeholder="Book's year" required />
+      <input v-model.number="pages" type="number" placeholder="Number of pages" required />
+      <input v-model.number="category" type="number" placeholder="Category ID" required />
+      <input v-model.number="writer" type="number" placeholder="Writer ID" required />
+      <button type="submit">Submit</button>
     </form>
 
-    <p v-if="message" :class="messageClass">{{ message }}</p>
+    <p v-if="message">{{ message }}</p>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 
+// Reactive values for the input fields
 const title = ref('')
 const year = ref(null)
 const pages = ref(null)
 const category = ref(null)
 const writer = ref(null)
 const message = ref('')
-const messageClass = ref('')
 
-const submitBook = async () => {
+// Decrypt the token and get the userId
+const getUserIdFromToken = () => {
+  const token = localStorage.getItem('token')
+  if (!token) return null
+
   try {
-    const response = await fetch('http://localhost:3000/api/books', {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.userId //or payload.utilisateur_id - check what you named in payload
+  } catch (e) {
+    console.error('Error decoding token:', e)
+    return null
+  }
+}
+
+// This method is called when you submit the form
+const submitBook = async () => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    message.value = 'User is not authorized.'
+    return
+  }
+
+  const userId = getUserIdFromToken()
+
+  try {
+    const res = await fetch('http://localhost:9999/api/books', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         titre: title.value,
         annee_edition: year.value,
@@ -75,89 +62,49 @@ const submitBook = async () => {
       }),
     })
 
-    const data = await response.json()
+    const data = await res.json()
 
-    if (response.ok) {
-      message.value = `Book "${title.value}" added successfully!`
-      messageClass.value = 'success'
+    if (res.ok) {
+      message.value = 'Book added successfully!'
+      // Clear form
       title.value = ''
       year.value = null
       pages.value = null
       category.value = null
       writer.value = null
     } else {
-      message.value = data.message || 'Failed to add the book.'
-      messageClass.value = 'error'
+      message.value = 'Error: ' + data.message
     }
-  } catch (error) {
-    message.value = 'Error occurred while adding the book.'
-    messageClass.value = 'error'
-    console.error('Error:', error)
+  } catch (err) {
+    console.error(err)
+    message.value = 'Could not connect to server.'
   }
 }
 </script>
 
 <style scoped>
-.add-book-container {
-  width: 50%;
-  margin: 0 auto;
+.form-container {
+  max-width: 400px;
+  margin: 30px auto;
   padding: 20px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f9f9f9;
 }
-
-.title {
-  text-align: center;
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.add-book-form {
-  display: flex;
-  flex-direction: column;
-}
-
-label {
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
 input {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
   padding: 8px;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
 }
-
 button {
-  padding: 10px;
-  background-color: #4caf50;
-  color: white;
-  font-size: 1rem;
+  padding: 8px 16px;
+  background: #007bff;
   border: none;
-  border-radius: 4px;
+  color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
-
 button:hover {
-  background-color: #45a049;
-}
-
-.submit-btn {
-  margin-top: 10px;
-}
-
-.success {
-  color: green;
-  text-align: center;
-}
-
-.error {
-  color: red;
-  text-align: center;
+  background: #0056b3;
 }
 </style>
