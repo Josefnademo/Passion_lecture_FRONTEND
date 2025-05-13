@@ -6,7 +6,7 @@
     <router-link to="/" class="logo-link">
       <h1 class="logo-text">Passion <span class="logo-highlight">Lecture</span></h1>
     </router-link>
-    <router-link to="/profile" class="profile-link">
+    <router-link to="/users/:user_id" class="profile-link">
       <img src="/images/userProfile.png" class="user-icon" alt="User Profile" />
     </router-link>
     <Sidebar
