@@ -27,6 +27,8 @@
           v-for="book in showAll ? books : books.slice(0, 5)"
           :key="book.livre_id"
           class="book-card"
+          @click="router.push(`/details/${book.livre_id}`)"
+          style="cursor: pointer"
         >
           <img v-if="book.lien_image" :src="book.lien_image" :alt="book.titre" class="book-cover" />
           <div class="book-info">
