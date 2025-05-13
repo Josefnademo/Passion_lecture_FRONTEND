@@ -26,10 +26,20 @@ const router = createRouter({
       component: () => import('../views/BookByCategoryView.vue'),
     },
     {
+      path: '/users/:user_id',
+      name: 'userById',
+      component: () => import('../components/Profile.vue'),
+    } /*
+    {
+      path: '/books/:user_id',
+      name: 'booksByUserId',
+      component: () => import('../components/Profile.vue'),
+    },*/,
+    /*{
       path: '/profile',
       name: 'Profile',
       component: () => import('../components/Profile.vue'),
-    },
+    },*/
     {
       path: '/details/:id',
       name: 'Details',

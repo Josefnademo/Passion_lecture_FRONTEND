@@ -185,6 +185,21 @@ userRouter.get("/", async (req, res) => {
     });
   }
 });
+////////////////////////////////////////////////
+userRouter.get("/user/:id", async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User introuvable." });
+    }
+    res.json(success(`User ${user.username} trouvé.`, user));
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération du user.",
+      data: error,
+    });
+  }
+});
 
 /**
  * @swagger
