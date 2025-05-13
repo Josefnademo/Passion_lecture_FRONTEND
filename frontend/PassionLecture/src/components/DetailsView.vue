@@ -175,6 +175,7 @@ export default {
               note: this.rating,
               commentaire: this.commentText,
               user_id: 1, // TODO: Replace with actual logged-in user ID
+              book_id: this.book.livre_id,
             }),
           },
         )
@@ -188,7 +189,8 @@ export default {
           this.evaluations = evaluationsResult.data
           this.resetForm()
         } else {
-          alert('Failed to submit evaluation')
+          const errorData = await response.json()
+          alert(errorData.message || 'Failed to submit evaluation')
         }
       } catch (error) {
         console.error('Error submitting evaluation:', error)
