@@ -1,20 +1,27 @@
 <template>
   <div class="container">
-    <div class="book-container">
-      <h1 class="book-title">{{ book.title }}</h1>
+    <div v-if="loading" class="loading">Loading...</div>
+    <div v-else-if="!book" class="error">Book not found</div>
+    <div v-else class="book-container">
+      <h1 class="book-title">{{ book.titre }}</h1>
 
       <div class="book-content">
         <div class="book-image-container">
           <div class="book-image">
-            <img :src="'/placeholder.svg?height=400&width=400'" :alt="book.title" />
+            <img
+              :src="book.lien_image || '/placeholder.svg?height=400&width=400'"
+              :alt="book.titre"
+            />
           </div>
-          <a :href="book.pdfLink" class="pdf-link">PDF Link</a>
+          <a :href="book.lien_pdf" class="pdf-link" v-if="book.lien_pdf">PDF Link</a>
         </div>
 
         <div class="book-details">
           <div class="author-info">
-            <h2 class="author-title">Author: {{ book.author }}</h2>
-            <p class="editor">Editor: {{ book.editor }}</p>
+            <h2 class="author-title">
+              Author: {{ book.writer ? `${book.writer.nom} ${book.writer.prenom}` : 'Unknown' }}
+            </h2>
+            <p class="editor" v-if="book.editor">Editor: {{ book.editor }}</p>
           </div>
 
           <div class="resume-section">
@@ -39,7 +46,7 @@
               <h4 class="new-comment-title">New comment</h4>
               <form @submit.prevent="handleCommentSubmit">
                 <div class="rating-container">
-                  <star-rating @change="setRating" />
+                  <star-rating @update:rating="setRating" />
                 </div>
                 <textarea
                   v-model="commentText"
@@ -64,37 +71,27 @@
 export default {
   name: 'BookPage',
   components: {
-    StarRating: () => import('@/components/star-rating'), // Import star rating component
-  },
-  props: {
-    id: {
-      type: String,
-      required: true,
-    },
+    StarRating: () => import('./star-rating.vue'),
   },
   data() {
     return {
       commentText: '',
       rating: 0,
-      // Example pour testing TUTUTUTU MARX VERSHTAPPEN
-      book: {
-        title: 'The King',
-        author: 'Hamilton Louis',
-        editor: 'Socket Edissions',
-        pdfLink: '#',
-        resume:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc consequat tortor eu ultrices. Etiam sed mi mauris. Vivamus hendrerit, lacus quis posuere congue, diam orci. Ut quis semper libero, ac consectetur ex. Sed ac diam neque. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam fringilla bibendum vitae mattis enim, laoreet.',
-        comments: [
-          { id: '1', user: 'User1', text: 'Great book!', rating: 5 },
-          { id: '2', user: 'User2', text: 'I enjoyed reading this.', rating: 4 },
-        ],
-      },
+      book: null,
+      loading: true,
     }
   },
-  created() {
-    // Here you would typically fetch the book data based on ID
-    // For example: this.fetchBookData(this.id)
-    this.book.id = this.id
+  async created() {
+    const bookId = this.$route.params.id
+    try {
+      const response = await fetch(`http://localhost:9999/api/books/${bookId}`)
+      const result = await response.json()
+      this.book = result.data
+    } catch (error) {
+      console.error('Error loading book details:', error)
+    } finally {
+      this.loading = false
+    }
   },
   methods: {
     setRating(value) {
