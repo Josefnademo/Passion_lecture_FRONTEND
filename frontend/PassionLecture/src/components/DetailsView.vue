@@ -21,7 +21,12 @@
             <h2 class="author-title">
               Author: {{ book.writer ? `${book.writer.nom} ${book.writer.prenom}` : 'Unknown' }}
             </h2>
-            <p class="editor" v-if="book.editor">Editor: {{ book.editor }}</p>
+            <p class="editor" v-if="book.editeur">Editor: {{ book.editeur }}</p>
+            <p class="details">
+              Year: {{ book.annee_edition }}<br />
+              Pages: {{ book.nombre_de_page }}<br />
+              Category: {{ book.category ? book.category.nom : 'Uncategorized' }}
+            </p>
           </div>
 
           <div class="resume-section">
@@ -30,35 +35,41 @@
           </div>
 
           <div class="comments-section">
-            <h3 class="section-title">Comments</h3>
+            <h3 class="section-title">Evaluations</h3>
 
-            <div class="comments-list">
-              <div v-for="comment in book.comments" :key="comment.id" class="comment-card">
-                <div class="comment-header">
-                  <p class="commenter-name">{{ comment.user }}</p>
-                  <star-rating :initial-rating="comment.rating" :read-only="true" />
+            <div v-if="loadingEvaluations" class="loading">Loading evaluations...</div>
+            <div v-else>
+              <div class="comments-list">
+                <div v-for="evaluation in evaluations" :key="evaluation.id" class="comment-card">
+                  <div class="comment-header">
+                    <p class="commenter-name">User #{{ evaluation.user_id }}</p>
+                    <star-rating :initial-rating="evaluation.note / 2" :read-only="true" />
+                  </div>
+                  <p class="comment-text">{{ evaluation.commentaire }}</p>
+                  <p class="comment-date">
+                    {{ new Date(evaluation.created).toLocaleDateString() }}
+                  </p>
                 </div>
-                <p class="comment-text">{{ comment.text }}</p>
               </div>
-            </div>
 
-            <div class="new-comment-card">
-              <h4 class="new-comment-title">New comment</h4>
-              <form @submit.prevent="handleCommentSubmit">
-                <div class="rating-container">
-                  <star-rating @update:rating="setRating" />
-                </div>
-                <textarea
-                  v-model="commentText"
-                  class="comment-textarea"
-                  rows="4"
-                  placeholder="Write your comment here..."
-                ></textarea>
-                <div class="form-actions">
-                  <button type="button" class="cancel-button" @click="resetForm">cancel</button>
-                  <button type="submit" class="submit-button">send comment</button>
-                </div>
-              </form>
+              <div class="new-comment-card">
+                <h4 class="new-comment-title">Add Your Evaluation</h4>
+                <form @submit.prevent="handleCommentSubmit">
+                  <div class="rating-container">
+                    <star-rating @update:rating="setRating" />
+                  </div>
+                  <textarea
+                    v-model="commentText"
+                    class="comment-textarea"
+                    rows="4"
+                    placeholder="Write your evaluation here..."
+                  ></textarea>
+                  <div class="form-actions">
+                    <button type="button" class="cancel-button" @click="resetForm">Cancel</button>
+                    <button type="submit" class="submit-button">Submit Evaluation</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -79,32 +90,77 @@ export default {
       rating: 0,
       book: null,
       loading: true,
+      evaluations: [],
+      loadingEvaluations: true,
     }
   },
   async created() {
     const bookId = this.$route.params.id
     try {
-      const response = await fetch(`http://localhost:9999/api/books/${bookId}`)
-      const result = await response.json()
-      this.book = result.data
+      // Fetch book details
+      const bookResponse = await fetch(`http://localhost:9999/api/books/${bookId}`)
+      const bookResult = await bookResponse.json()
+      this.book = bookResult.data
+
+      // Fetch evaluations
+      const evaluationsResponse = await fetch(
+        `http://localhost:9999/api/books/${bookId}/evaluations`,
+      )
+      const evaluationsResult = await evaluationsResponse.json()
+      this.evaluations = evaluationsResult.data
     } catch (error) {
       console.error('Error loading book details:', error)
     } finally {
       this.loading = false
+      this.loadingEvaluations = false
     }
   },
   methods: {
     setRating(value) {
-      this.rating = value
+      // Convert 5-star rating to 10-point scale
+      this.rating = value * 2
     },
     resetForm() {
       this.commentText = ''
       this.rating = 0
     },
-    handleCommentSubmit() {
-      // Logic to submit comment would go here
-      console.log({ commentText: this.commentText, rating: this.rating })
-      this.resetForm()
+    async handleCommentSubmit() {
+      if (!this.commentText || !this.rating) {
+        alert('Please provide both a rating and a comment')
+        return
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:9999/api/books/${this.book.livre_id}/evaluations`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              note: this.rating,
+              commentaire: this.commentText,
+              user_id: 1, // TODO: Replace with actual logged-in user ID
+            }),
+          },
+        )
+
+        if (response.ok) {
+          // Refresh evaluations
+          const evaluationsResponse = await fetch(
+            `http://localhost:9999/api/books/${this.book.livre_id}/evaluations`,
+          )
+          const evaluationsResult = await evaluationsResponse.json()
+          this.evaluations = evaluationsResult.data
+          this.resetForm()
+        } else {
+          alert('Failed to submit evaluation')
+        }
+      } catch (error) {
+        console.error('Error submitting evaluation:', error)
+        alert('Error submitting evaluation')
+      }
     },
   },
 }
@@ -288,5 +344,32 @@ export default {
   .book-details {
     width: 66.666%;
   }
+}
+
+.details {
+  color: #7a8ea3;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #7a8ea3;
+  font-style: italic;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #f26565;
+  font-weight: bold;
 }
 </style>
