@@ -1,19 +1,28 @@
 <template>
   <div class="form-container">
-    <h2>Add New Book</h2>
+    <h2>Add your book here</h2>
     <form @submit.prevent="submitBook">
+      <strong>Title</strong>
       <input v-model="title" type="text" placeholder="Book's title" required />
-      <input v-model.number="year" type="number" placeholder="Book's year" required />
-      <input v-model.number="pages" type="number" placeholder="Number of pages" required />
-      <input v-model.number="category" type="number" placeholder="Category ID" required />
-      <input v-model.number="writer" type="number" placeholder="Writer ID" required />
-      <button type="submit">Submit</button>
+
+      <strong>Year of editing</strong>
+      <input v-model.number="year" type="number" placeholder="Book's year of editing" required />
+
+      <strong>Number of pages</strong>
+      <input v-model.number="pages" type="number" placeholder="Book's number of pages" required />
+
+      <strong>Category</strong>
+      <input v-model.number="category" type="number" placeholder="Book's category" required />
+
+      <strong>Writer</strong>
+      <input v-model.number="writer" type="number" placeholder="Book's writer" required />
+
+      <button type="submit">Add</button>
     </form>
 
     <p v-if="message">{{ message }}</p>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue'
 
@@ -84,27 +93,68 @@ const submitBook = async () => {
 
 <style scoped>
 .form-container {
-  max-width: 400px;
-  margin: 30px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #f9f9f9;
+  max-width: 80em;
+  width: 40em;
+  margin: 100px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+h2 {
+  color: #415a77;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2em;
+  font-weight: 700;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
 input {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
+  padding: 10px 15px;
+  border: 1px solid #b3dec1;
+  border-radius: 4px;
+  font-size: 16px;
 }
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
 button {
-  padding: 8px 16px;
-  background: #007bff;
-  border: none;
+  background-color: #b3dec1;
   color: white;
+  padding: 35px 20px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
 }
+
 button:hover {
-  background: #0056b3;
+  background-color: #64dd8c;
+}
+
+p {
+  text-align: center;
+  margin-top: 15px;
+  color: #415a77;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 20px;
+    margin: 10px;
+  }
 }
 </style>
