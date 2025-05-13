@@ -17,6 +17,9 @@
       <strong>Writer</strong>
       <input v-model.number="writer" type="number" placeholder="Book's writer" required />
 
+      <!--Select image -->
+      <input type="file" @change="handleImage" accept="image/png, image/jpeg, image/jpg" />
+
       <button type="submit">Add</button>
     </form>
 
@@ -33,6 +36,15 @@ const pages = ref(null)
 const category = ref(null)
 const writer = ref(null)
 const message = ref('')
+const image = ref(null)
+
+// Function to handle image upload
+const handleImage = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    image.value = file
+  }
+}
 
 // Decrypt the token and get the userId
 const getUserIdFromToken = () => {
@@ -61,13 +73,18 @@ const submitBook = async () => {
   try {
     const res = await fetch('http://localhost:9999/api/books', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // IMPORTANT: we transfer the token
+      },
       body: JSON.stringify({
         titre: title.value,
         annee_edition: year.value,
         nombre_de_page: pages.value,
         category_id: category.value,
         writer_id: writer.value,
+        lien_image: image.value,
+        user_id: userId, // can be removed, if the backend itself takes the userId from the token
       }),
     })
 
@@ -81,6 +98,7 @@ const submitBook = async () => {
       pages.value = null
       category.value = null
       writer.value = null
+      image.value = null
     } else {
       message.value = 'Error: ' + data.message
     }
