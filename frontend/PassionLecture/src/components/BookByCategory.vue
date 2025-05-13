@@ -5,7 +5,7 @@
       <h3 class="section-title">Latest Books</h3>
       <div v-if="loading" class="loading">Loading...</div>
       <div v-else class="books-grid">
-        <DisplayBooks :books="books" />
+        <DisplayBooks :books="books" :router="router" />
       </div>
     </section>
   </div>

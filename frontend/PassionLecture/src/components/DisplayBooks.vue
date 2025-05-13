@@ -1,6 +1,6 @@
 <template>
   <div
-    v-for="book in books"
+    v-for="book in showAll ? books : books.slice(0, 5)"
     :key="book.livre_id"
     class="book-card"
     @click="router.push(`/details/${book.livre_id}`)"
@@ -24,6 +24,9 @@ export default defineComponent({
   props: {
     books: {
       type: Array,
+      required: true,
+    },
+    router: {
       required: true,
     },
   },

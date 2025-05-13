@@ -32,7 +32,7 @@
     <div class="info-item">
       <h2 class="info-label">Books Added</h2>
       <div v-if="books" class="books-grid">
-        <DisplayBooks :books="books" />
+        <DisplayBooks :books="books" :router="router" />
       </div>
     </div>
   </div>
