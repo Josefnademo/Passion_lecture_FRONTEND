@@ -5,7 +5,13 @@
       <h3 class="section-title">Latest Books</h3>
       <div v-if="loading" class="loading">Loading...</div>
       <div v-else class="books-grid">
-        <div v-for="book in books" :key="book.livre_id" class="book-card">
+        <div
+          v-for="book in books"
+          :key="book.livre_id"
+          class="book-card"
+          @click="router.push(`/details/${book.livre_id}`)"
+          style="cursor: pointer"
+        >
           <img v-if="book.lien_image" :src="book.lien_image" :alt="book.titre" class="book-cover" />
           <div class="book-info">
             <h4 class="book-title">{{ book.titre }}</h4>
