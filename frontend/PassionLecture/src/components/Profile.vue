@@ -12,27 +12,27 @@
       <div class="profile-info">
         <div class="info-item">
           <h2 class="info-label">Name</h2>
-          <p class="info-value">{{ name }}</p>
-        </div>
-
-        <div class="info-item">
-          <h2 class="info-label">Books Added</h2>
-          <p class="info-value">{{ booksAdded }}</p>
+          <p v-if="user" class="info-value">{{ user.username }}</p>
         </div>
 
         <div class="info-item">
           <h2 class="info-label">Comments</h2>
-          <p class="info-value">{{ commentsCount }}</p>
+          <p v-if="user" class="info-value">{{ user.utilisateur_id }}</p>
         </div>
 
         <div class="info-item">
           <h2 class="info-label">Member Since</h2>
-          <p class="info-value">{{ memberSince }}</p>
+          <p v-if="user" class="info-value">{{ user.date_creation }}</p>
         </div>
       </div>
-
       <div class="button-container">
         <button class="edit-button" @click="editProfile">Edit Profile</button>
+      </div>
+    </div>
+    <div class="info-item">
+      <h2 class="info-label">Books Added</h2>
+      <div v-if="books" class="books-grid">
+        <DisplayBooks :books="books" />
       </div>
     </div>
   </div>
@@ -42,26 +42,37 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { RouterLink, RouterView } from 'vue-router'
+import { useRoute } from 'vue-router'
+import DisplayBooks from './DisplayBooks.vue'
 
 // Initialize the router
 const router = useRouter()
+const route = useRoute()
 
-// Reactive data
-/*const name = ref(null)
-const booksAdded = ref(null)
-const commentsCount = ref(null)
-const memberSince = ref(null)*/
-const profile = ref(null)
+const userId = route.params.user_id
+console.log(userId)
+
+const user = ref(null)
+const books = ref([])
+const loading = ref(true)
 
 onMounted(async () => {
   // Fetch books from API
   try {
-    const response = await fetch(`http://localhost:9999/api/categories/${categorieId}/books`)
+    const response = await fetch(`http://localhost:9999/api/users/${userId}`)
     const result = await response.json()
     // If the response has the structure { message: "...", data: [...] }
-    books.value = result.data
+    user.value = result.data
+    try {
+      const answer = await fetch(`http://localhost:9999/api/books/${userId}/user`)
+      const outcome = await answer.json()
+      console.log(outcome.data)
+      books.value = outcome.data
+    } catch (error) {
+      console.error('Error getting users books:', error)
+    }
   } catch (error) {
-    console.error('Error loading categories:', error)
+    console.error('Error loading user:', error)
   } finally {
     loading.value = false
   }
@@ -155,5 +166,47 @@ const editProfile = () => {
 
 .edit-button:hover {
   background-color: #6789b5;
+}
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 15.625em);
+  justify-content: center;
+  gap: 1.875em;
+}
+
+.book-card {
+  background-color: #f8f9fa;
+  border-radius: 0.5em;
+  box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.book-card:hover {
+  transform: translateY(-0.9375em);
+  box-shadow: 0 0.625em 1.25em rgba(0, 0, 0, 0.12);
+}
+
+.book-title {
+  font-size: 1.7em;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.3125em;
+}
+
+.book-cover {
+  width: 100%;
+  height: 23.75em;
+  object-fit: cover;
+  border-radius: 0.25em;
+  margin-bottom: 0.625em;
+}
+
+.book-info {
+  padding: 0.9375em;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
 }
 </style>
