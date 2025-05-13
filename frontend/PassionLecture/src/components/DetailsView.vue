@@ -19,17 +19,23 @@
         <div class="book-details">
           <div class="author-info">
             <h2 class="author-title">
-              Author: {{ book.writer ? `${book.writer.nom} ${book.writer.prenom}` : 'Unknown' }}
+              Author: {{ author ? `${author.prenom} ${author.nom_de_famille}` : 'Unknown' }}
             </h2>
             <p class="editor" v-if="book.editeur">Editor: {{ book.editeur }}</p>
             <p class="details">
-              Year: {{ book.annee_edition }}<br />
-              Pages: {{ book.nombre_de_page }}<br />
-              Category: {{ book.category ? book.category.nom : 'Uncategorized' }}
+              <span v-if="book.annee_edition">Year: {{ book.annee_edition }}<br /></span>
+              <span v-if="book.nombre_de_page">Pages: {{ book.nombre_de_page }}<br /></span>
+              <span v-if="category">Category: {{ category.nom }}<br /></span>
+              <span v-if="book.created"
+                >Added: {{ new Date(book.created).toLocaleDateString() }}<br
+              /></span>
+              <span v-if="book.updated"
+                >Last Updated: {{ new Date(book.updated).toLocaleDateString() }}</span
+              >
             </p>
           </div>
 
-          <div class="resume-section">
+          <div class="resume-section" v-if="book.resume">
             <h3 class="section-title">Resume</h3>
             <p class="resume-text">{{ book.resume }}</p>
           </div>
@@ -39,7 +45,7 @@
 
             <div v-if="loadingEvaluations" class="loading">Loading evaluations...</div>
             <div v-else>
-              <div class="comments-list">
+              <div v-if="evaluations && evaluations.length > 0" class="comments-list">
                 <div v-for="evaluation in evaluations" :key="evaluation.id" class="comment-card">
                   <div class="comment-header">
                     <p class="commenter-name">User #{{ evaluation.user_id }}</p>
@@ -50,6 +56,9 @@
                     {{ new Date(evaluation.created).toLocaleDateString() }}
                   </p>
                 </div>
+              </div>
+              <div v-else class="no-evaluations">
+                No evaluations yet. Be the first to review this book!
               </div>
 
               <div class="new-comment-card">
@@ -92,6 +101,8 @@ export default {
       loading: true,
       evaluations: [],
       loadingEvaluations: true,
+      author: null,
+      category: null,
     }
   },
   async created() {
@@ -100,16 +111,38 @@ export default {
       // Fetch book details
       const bookResponse = await fetch(`http://localhost:9999/api/books/${bookId}`)
       const bookResult = await bookResponse.json()
+      console.log('Book details:', bookResult.data)
       this.book = bookResult.data
+
+      // Fetch author details if writer_id exists
+      if (this.book.writer_id) {
+        const authorResponse = await fetch(
+          `http://localhost:9999/api/authors/${this.book.writer_id}`,
+        )
+        const authorResult = await authorResponse.json()
+        console.log('Author details:', authorResult.data)
+        this.author = authorResult.data
+      }
+
+      // Fetch category details if category_id exists
+      if (this.book.category_id) {
+        const categoryResponse = await fetch(
+          `http://localhost:9999/api/categories/${this.book.category_id}`,
+        )
+        const categoryResult = await categoryResponse.json()
+        console.log('Category details:', categoryResult) // Note: no .data here as per the API response
+        this.category = categoryResult
+      }
 
       // Fetch evaluations
       const evaluationsResponse = await fetch(
         `http://localhost:9999/api/books/${bookId}/evaluations`,
       )
       const evaluationsResult = await evaluationsResponse.json()
+      console.log('Evaluations:', evaluationsResult.data)
       this.evaluations = evaluationsResult.data
     } catch (error) {
-      console.error('Error loading book details:', error)
+      console.error('Error loading details:', error)
     } finally {
       this.loading = false
       this.loadingEvaluations = false
@@ -371,5 +404,15 @@ export default {
   padding: 2rem;
   color: #f26565;
   font-weight: bold;
+}
+
+.no-evaluations {
+  text-align: center;
+  padding: 2rem;
+  color: #7a8ea3;
+  font-style: italic;
+  background-color: #f6f8fa;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 </style>
