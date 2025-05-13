@@ -40,6 +40,11 @@ const router = createRouter({
       name: 'Create',
       component: () => import('../components/CreateBook.vue'),
     },
+    {
+      path: '/register',
+      name: 'Register',
+      component: () => import('../views/RegisterView.vue'),
+    },
     /* {
       path: '/search',
       name: 'Search',
