@@ -6,9 +6,18 @@
     <router-link to="/" class="logo-link">
       <h1 class="logo-text">Passion <span class="logo-highlight">Lecture</span></h1>
     </router-link>
-    <router-link to="/users/:user_id" class="profile-link">
-      <img src="/images/userProfile.png" class="user-icon" alt="User Profile" />
-    </router-link>
+    <div class="loginButtons">
+      <router-link to="/login" class="profile-link">
+        <p>Log in</p>
+      </router-link>
+      <router-link to="/register" class="profile-link">
+        <p>Register</p>
+      </router-link>
+      <router-link to="/users/:user_id" class="profile-link">
+        <img src="/images/userProfile.png" class="user-icon" alt="User Profile" />
+      </router-link>
+    </div>
+
     <Sidebar
       v-if="sidebarOpen && isSidebarAvailable"
       :is-open="sidebarOpen"
@@ -74,6 +83,7 @@ const toggleSidebar = () => {
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  margin-left: 10em;
 }
 
 .logo-text {
@@ -106,5 +116,9 @@ const toggleSidebar = () => {
 .user-icon {
   width: 2em;
   height: 2em;
+}
+.loginButtons {
+  display: flex;
+  gap: 1em;
 }
 </style>

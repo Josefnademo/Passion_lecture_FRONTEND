@@ -1,24 +1,21 @@
 <template>
   <div class="container">
-    <h1 class="page-title">Register to Passion Lecture</h1>
+    <h1 class="page-title">Log in to Passion Lecture</h1>
     <form class="register-form" @submit.prevent="handleSubmit">
       <div class="form-group">
         <label class="form-label">Name</label>
-        <input type="text" v-model="name" placeholder="Albert" class="form-input" />
+        <input type="text" v-model="formData.name" placeholder="Name" class="form-input" />
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input type="password" v-model="password" placeholder="************" class="form-input" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Confirm password</label>
         <input
           type="password"
-          v-model="confirmPassword"
+          v-model="formData.password"
           placeholder="************"
           class="form-input"
         />
       </div>
+
       <div class="form-actions">
         <button type="button" class="cancel-button" @click="handleCancel">Cancel</button>
         <button type="submit" class="confirm-button">Confirm</button>
@@ -27,25 +24,34 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-const name = ref(null)
-const password = ref(null)
-const confirmPassword = ref(null)
-const handleSubmit = () => {
-  // Form submission logic would go here
-  console.log('Form submitted:')
-  // You'd typically validate the form and handle API calls here
-}
-const handleCancel = () => {
-  // Cancel logic - for example, redirect or reset form
-
-  name = ''
-  password = ''
-  confirmPassword = ''
-
-  // You might also want to navigate away:
-  // this.$router.push('/');
+<script>
+export default {
+  name: 'Register',
+  data() {
+    return {
+      formData: {
+        name: '',
+        password: '',
+        confirmPassword: '',
+      },
+    }
+  },
+  methods: {
+    handleSubmit() {
+      // Form submission logic would go here
+      console.log('Form submitted:', this.formData)
+      // You'd typically validate the form and handle API calls here
+    },
+    handleCancel() {
+      // Cancel logic - for example, redirect or reset form
+      this.formData = {
+        name: '',
+        password: '',
+      }
+      // You might also want to navigate away:
+      // this.$router.push('/');
+    },
+  },
 }
 </script>
 

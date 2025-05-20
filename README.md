@@ -1,5 +1,35 @@
 # Passion_lecture_FRONTEND
 
+## 🛠️ Technologies utilisées
+
+Ce projet utilise plusieurs technologies modernes côté frontend et backend :
+
+🌐 Frontend
+
+- Vue.js 3 – Framework JavaScript pour construire une interface utilisateur réactive
+- Vue Router – Pour la navigation entre les pages
+- Pinia (optionnel) – Pour la gestion d'état globale si nécessaire
+- SCSS / CSS3 – Pour le style et la mise en page
+- Vite – Serveur de développement rapide et bundler
+
+⚙ Backend
+
+- Node.js – Environnement d'exécution JavaScript côté serveur
+- Express.js – Framework minimaliste pour créer une API REST
+- Multer – Pour la gestion des fichiers (upload d’images)
+- Sequelize – ORM pour interagir avec la base de données SQL
+- MySQL – Base de données relationnelle
+
+🔐 Sécurité / Authentification
+
+- JWT (JSON Web Token) – Pour sécuriser les routes et vérifier l’identité des utilisateurs grâce à un token signé
+
+🗂️ Autres outils
+
+- Git & GitHub – Pour le versionnage et le travail collaboratif
+- Insomnia – Pour tester les routes de l'API
+- Prettier – Pour assurer une qualité de code cohérent
+
 ## Installation et déploiement
 
 **Étapes pour lancer le projet :**
@@ -29,7 +59,6 @@ git clone https://github.com/Josefnademo/Passion_lecture_FRONTEND/
 ```
 
 5. Exécuter le script PowerShell : Le script **Script_de_demarrage_automatique.ps1** automatise toute l'installation et déploiement
-
 
 ## Explication du script PowerShell
 

@@ -2,7 +2,6 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sequelize } from "../../db/sequelize.js";
-
 const router = express.Router();
 
 /**
@@ -66,7 +65,6 @@ router.post("/", async (req, res) => {
     const token = jwt.sign({ userId: user.utilisateur_id }, "yourSecretKey", {
       expiresIn: "24h",
     });
-
     res.json({ message: "Login successful", token });
   } catch (error) {
     console.error("Login error:", error);
