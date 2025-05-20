@@ -33,6 +33,7 @@ export default {
   flex: 1;
   max-width: 4000px;
   margin: 0 auto;
+  padding-top: 4rem; /* Add padding to account for fixed header */
 }
 
 /* Error message styling */

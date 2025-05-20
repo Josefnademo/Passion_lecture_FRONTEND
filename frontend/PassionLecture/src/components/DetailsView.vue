@@ -245,8 +245,8 @@ export default {
 .book-title {
   font-size: 1.875rem;
   font-weight: bold;
-  color: #3b6992; /* medium-blue from original */
-  margin-bottom: 1.5rem;
+  color: #3b6992;
+  margin: 1rem 0 1.5rem 0;
 }
 
 .book-content {
