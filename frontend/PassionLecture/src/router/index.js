@@ -29,17 +29,13 @@ const router = createRouter({
       path: '/users/:user_id',
       name: 'userById',
       component: () => import('../components/Profile.vue'),
-    } /*
+    },
     {
-      path: '/books/:user_id',
-      name: 'booksByUserId',
-      component: () => import('../components/Profile.vue'),
-    },*/,
-    /*{
-      path: '/profile',
-      name: 'Profile',
-      component: () => import('../components/Profile.vue'),
-    },*/
+      path: '/my-books',
+      name: 'myBooks',
+      component: () => import('../views/MyBooksView.vue'),
+      meta: { requiresAuth: true },
+    },
     {
       path: '/details/:id',
       name: 'Details',
@@ -66,13 +62,24 @@ const router = createRouter({
       component: () => import('../views/SearchView.vue'),
     },
 
-
     {
       path: '/books',
       name: 'Books',
       component: () => import('../views/BooksView.vue'),
     },*/
   ],
+})
+
+// Navigation guard to check authentication
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('userId')
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // Redirect to login if trying to access protected route while not authenticated
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router
