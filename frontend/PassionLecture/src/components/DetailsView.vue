@@ -9,8 +9,14 @@
         <div class="book-image-container">
           <div class="book-image">
             <img
-              :src="book.lien_image || '/placeholder.svg?height=400&width=400'"
+              v-if="book.lien_image"
+              :src="
+                book.lien_image.startsWith('http')
+                  ? book.lien_image
+                  : `http://localhost:9999${book.lien_image}`
+              "
               :alt="book.titre"
+              class="book-cover"
             />
           </div>
           <a :href="book.lien_pdf" class="pdf-link" v-if="book.lien_pdf">PDF Link</a>
@@ -96,6 +102,7 @@
 <script>
 import StarRating from './star-rating.vue'
 import api from '../services/api'
+import DisplayBooks from './DisplayBooks.vue'
 
 export default {
   name: 'BookPage',
