@@ -15,7 +15,10 @@
         <div class="book-info">
           <h3>{{ book.title }}</h3>
           <p>{{ book.description }}</p>
-          <router-link :to="'/details/' + book.id" class="view-details">View Details</router-link>
+          <div class="book-actions">
+            <router-link :to="'/details/' + book.id" class="view-details">View Details</router-link>
+            <router-link :to="'/edit/' + book.id" class="edit-button">Edit Book</router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -173,5 +176,25 @@ h1 {
 
 .create-button:hover {
   background-color: #218838;
+}
+
+.book-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.edit-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #ffc107;
+  color: #000;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
 }
 </style>
