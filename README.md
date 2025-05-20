@@ -1,6 +1,37 @@
 # Passion_lecture_FRONTEND
 
-### Explication du script PowerShell
+## Installation et déploiement
+
+**Étapes pour lancer le projet :**
+
+1. Cloner le dépôt Git :
+
+```bash
+git clone https://github.com/Josefnademo/Passion_lecture_FRONTEND/
+```
+
+2. Se rendre dans le répertoire du projet :
+
+```bash
+ cd Passion_lecture_FRONTEND\backend\code
+```
+
+3. Lancer les conteneurs Docker :
+
+```bash
+ docker-compose up -d
+```
+
+4. Se rendre dans le répertoire de base du projet :
+
+```bash
+ cd ../..
+```
+
+5. Exécuter le script PowerShell : Le script **Script_de_demarrage_automatique.ps1** automatise toute l'installation et déploiement
+
+
+## Explication du script PowerShell
 
 Ce script automatise l'installation et le démarrage du backend et frontend.
 
@@ -26,7 +57,7 @@ Ce script automatise l'installation et le démarrage du backend et frontend.
 
 - Nettoie les jobs de backend et frontend à l'arrêt.
 
-#### Docker :
+### Docker :
 
 Les conteneurs exposent les ports nécessaires
 
