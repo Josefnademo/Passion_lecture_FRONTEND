@@ -49,7 +49,7 @@
                 <div v-for="evaluation in evaluations" :key="evaluation.id" class="comment-card">
                   <div class="comment-header">
                     <p class="commenter-name">User #{{ evaluation.user_id }}</p>
-                    <star-rating :initial-rating="evaluation.note / 2" :read-only="true" />
+                    <star-rating :initial-rating="evaluation.note" :read-only="true" />
                   </div>
                   <p class="comment-text">{{ evaluation.commentaire }}</p>
                   <p class="comment-date">
@@ -65,7 +65,7 @@
                 <h4 class="new-comment-title">Add Your Evaluation</h4>
                 <form @submit.prevent="handleCommentSubmit">
                   <div class="rating-container">
-                    <star-rating @update:rating="setRating" />
+                    <star-rating v-model:rating="rating" />
                   </div>
                   <textarea
                     v-model="commentText"
@@ -88,10 +88,12 @@
 </template>
 
 <script>
+import StarRating from './star-rating.vue'
+
 export default {
   name: 'BookPage',
   components: {
-    StarRating: () => import('./star-rating.vue'),
+    StarRating,
   },
   data() {
     return {
@@ -150,8 +152,7 @@ export default {
   },
   methods: {
     setRating(value) {
-      // Convert 5-star rating to 10-point scale
-      this.rating = value * 2
+      this.rating = value
     },
     resetForm() {
       this.commentText = ''
