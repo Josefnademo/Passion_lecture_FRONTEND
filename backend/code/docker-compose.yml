@@ -28,25 +28,25 @@ services:
     ports:
       - "8081:80"
 
-  app:
-    build:
-      context: .
-      dockerfile: nodejs.dockerfile
-    container_name: ${COMPOSE_PROJECT_NAME}_app
-    ports:
-      - "9999:9999"
-    depends_on:
-      - db
-    environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-    volumes:
-      - .:/home/node/app
-    working_dir: /home/node/app
-    command: sh -c "npm install && npm start"
+#  app:
+#    build:
+#      context: .
+#      dockerfile: nodejs.dockerfile
+#    container_name: ${COMPOSE_PROJECT_NAME}_app
+#    ports:
+#      - "9999:9999"
+#    depends_on:
+#      - db
+#    environment:
+#      DB_HOST: ${DB_HOST}
+#      DB_PORT: ${DB_PORT}
+#      DB_USER: ${DB_USER}
+#      DB_PASSWORD: ${DB_PASSWORD}
+#      DB_NAME: ${DB_NAME}
+#    volumes:
+#      - .:/home/node/app
+#    working_dir: /home/node/app
+#    command: sh -c "npm install && npm start"
 
 volumes:
   dbdata:
