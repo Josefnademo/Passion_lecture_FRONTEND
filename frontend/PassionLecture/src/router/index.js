@@ -47,6 +47,12 @@ const router = createRouter({
       component: () => import('../components/CreateBook.vue'),
     },
     {
+      path: '/edit/:id',
+      name: 'EditBook',
+      component: () => import('../views/EditBookView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/register',
       name: 'Register',
       component: () => import('../views/RegisterView.vue'),
