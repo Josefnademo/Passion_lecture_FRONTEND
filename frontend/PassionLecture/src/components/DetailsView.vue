@@ -61,7 +61,7 @@
                 No evaluations yet. Be the first to review this book!
               </div>
 
-              <div class="new-comment-card">
+              <div v-if="isLoggedIn" class="new-comment-card">
                 <h4 class="new-comment-title">Add Your Evaluation</h4>
                 <form @submit.prevent="handleCommentSubmit">
                   <div class="rating-container">
@@ -79,6 +79,12 @@
                   </div>
                 </form>
               </div>
+              <div v-else class="login-prompt">
+                <p>
+                  Please <router-link to="/login" class="login-link">login</router-link> to add your
+                  evaluation.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -89,6 +95,7 @@
 
 <script>
 import StarRating from './star-rating.vue'
+import api from '../services/api'
 
 export default {
   name: 'BookPage',
@@ -105,52 +112,59 @@ export default {
       loadingEvaluations: true,
       author: null,
       category: null,
+      isLoggedIn: false,
     }
   },
-  async created() {
-    const bookId = this.$route.params.id
-    try {
-      // Fetch book details
-      const bookResponse = await fetch(`http://localhost:9999/api/books/${bookId}`)
-      const bookResult = await bookResponse.json()
-      console.log('Book details:', bookResult.data)
-      this.book = bookResult.data
-
-      // Fetch author details if writer_id exists
-      if (this.book.writer_id) {
-        const authorResponse = await fetch(
-          `http://localhost:9999/api/authors/${this.book.writer_id}`,
-        )
-        const authorResult = await authorResponse.json()
-        console.log('Author details:', authorResult.data)
-        this.author = authorResult.data
-      }
-
-      // Fetch category details if category_id exists
-      if (this.book.category_id) {
-        const categoryResponse = await fetch(
-          `http://localhost:9999/api/categories/${this.book.category_id}`,
-        )
-        const categoryResult = await categoryResponse.json()
-        console.log('Category details:', categoryResult) // Note: no .data here as per the API response
-        this.category = categoryResult
-      }
-
-      // Fetch evaluations
-      const evaluationsResponse = await fetch(
-        `http://localhost:9999/api/books/${bookId}/evaluations`,
-      )
-      const evaluationsResult = await evaluationsResponse.json()
-      console.log('Evaluations:', evaluationsResult.data)
-      this.evaluations = evaluationsResult.data
-    } catch (error) {
-      console.error('Error loading details:', error)
-    } finally {
-      this.loading = false
-      this.loadingEvaluations = false
-    }
+  created() {
+    // Check if user is logged in
+    const user = JSON.parse(localStorage.getItem('user'))
+    this.isLoggedIn = !!user
+    this.loadBookDetails()
   },
   methods: {
+    async loadBookDetails() {
+      const bookId = this.$route.params.id
+      try {
+        // Fetch book details
+        const bookResponse = await fetch(`http://localhost:9999/api/books/${bookId}`)
+        const bookResult = await bookResponse.json()
+        console.log('Book details:', bookResult.data)
+        this.book = bookResult.data
+
+        // Fetch author details if writer_id exists
+        if (this.book.writer_id) {
+          const authorResponse = await fetch(
+            `http://localhost:9999/api/authors/${this.book.writer_id}`,
+          )
+          const authorResult = await authorResponse.json()
+          console.log('Author details:', authorResult.data)
+          this.author = authorResult.data
+        }
+
+        // Fetch category details if category_id exists
+        if (this.book.category_id) {
+          const categoryResponse = await fetch(
+            `http://localhost:9999/api/categories/${this.book.category_id}`,
+          )
+          const categoryResult = await categoryResponse.json()
+          console.log('Category details:', categoryResult)
+          this.category = categoryResult
+        }
+
+        // Fetch evaluations
+        const evaluationsResponse = await fetch(
+          `http://localhost:9999/api/books/${bookId}/evaluations`,
+        )
+        const evaluationsResult = await evaluationsResponse.json()
+        console.log('Evaluations:', evaluationsResult.data)
+        this.evaluations = evaluationsResult.data
+      } catch (error) {
+        console.error('Error loading details:', error)
+      } finally {
+        this.loading = false
+        this.loadingEvaluations = false
+      }
+    },
     setRating(value) {
       this.rating = value
     },
@@ -164,6 +178,12 @@ export default {
         return
       }
 
+      const user = JSON.parse(localStorage.getItem('user'))
+      if (!user) {
+        alert('Please login to submit an evaluation')
+        return
+      }
+
       try {
         const response = await fetch(
           `http://localhost:9999/api/books/${this.book.livre_id}/evaluations`,
@@ -171,11 +191,12 @@ export default {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${user.token}`,
             },
             body: JSON.stringify({
               note: this.rating,
               commentaire: this.commentText,
-              user_id: 1, // TODO: Replace with actual logged-in user ID
+              user_id: user.userId,
               book_id: this.book.livre_id,
             }),
           },
@@ -417,5 +438,23 @@ export default {
   background-color: #f6f8fa;
   border-radius: 0.5rem;
   margin-bottom: 1.5rem;
+}
+
+.login-prompt {
+  text-align: center;
+  padding: 1rem;
+  background-color: #f6f8fa;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.login-link {
+  color: #3b6992;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.login-link:hover {
+  color: #7abc94;
 }
 </style>
