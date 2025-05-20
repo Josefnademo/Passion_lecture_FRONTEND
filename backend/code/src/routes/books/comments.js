@@ -1,18 +1,15 @@
 import express from "express";
-import {
-  getComments,
-  addComment,
-} from "../../controllers/commentsController.js";
+import NotesController from "../../controllers/notesController.js";
 
 const router = express.Router({ mergeParams: true });
 
 /**
  * @swagger
- * /api/books/{id}/comments:
+ * /api/books/{id}/evaluations:
  *   get:
  *     tags: [Comments]
- *     summary: Get all comments for a book
- *     description: Retrieve all comments associated with a specific book
+ *     summary: Get all evaluations for a book
+ *     description: Retrieve all evaluations associated with a specific book
  *     parameters:
  *       - in: path
  *         name: id
@@ -22,7 +19,7 @@ const router = express.Router({ mergeParams: true });
  *         description: Book ID
  *     responses:
  *       200:
- *         description: List of comments retrieved successfully
+ *         description: List of evaluations retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -46,15 +43,15 @@ const router = express.Router({ mergeParams: true });
  *       500:
  *         description: Server error
  */
-router.get("/:id/comments", getComments);
+router.get("/:id/evaluations", NotesController.getEvaluationsForBook);
 
 /**
  * @swagger
- * /api/books/{id}/comments:
+ * /api/books/{id}/evaluations:
  *   post:
  *     tags: [Comments]
- *     summary: Add a comment to a book
- *     description: Create a new comment for a specific book
+ *     summary: Add an evaluation to a book
+ *     description: Create a new evaluation for a specific book
  *     parameters:
  *       - in: path
  *         name: id
@@ -71,16 +68,20 @@ router.get("/:id/comments", getComments);
  *             required:
  *               - content
  *               - user_id
+ *               - note
  *             properties:
  *               content:
  *                 type: string
- *                 description: The comment text
+ *                 description: The evaluation text
  *               user_id:
  *                 type: integer
- *                 description: ID of the user making the comment
+ *                 description: ID of the user making the evaluation
+ *               note:
+ *                 type: integer
+ *                 description: Rating given by the user
  *     responses:
  *       201:
- *         description: Comment created successfully
+ *         description: Evaluation created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -106,6 +107,6 @@ router.get("/:id/comments", getComments);
  *       500:
  *         description: Server error
  */
-router.post("/:id/comments", addComment);
+router.post("/:id/evaluations", NotesController.createEvaluation);
 
 export default router;
