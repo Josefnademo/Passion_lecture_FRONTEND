@@ -1,14 +1,17 @@
 <template>
   <div class="accueil-container">
-    <!-- Books section -->
     <section class="books-section">
-      <h3 class="section-title">Categories</h3>
-      <div v-if="loading" class="loading">Loading...</div>
-      <div v-else class="books-grid">
-        <div v-for="categorie in categories" :key="categorie.categorie_id" class="book-card">
-          <RouterLink :to="`/categories/${categorie.categorie_id}/books`"
-            ><h4 class="book-title">{{ categorie.nom }}</h4></RouterLink
-          >
+      <h3 class="section-title">📚 Book Categories</h3>
+      <div v-if="loading" class="loading">Loading categories...</div>
+      <div v-else class="columns-wrapper">
+        <div v-for="(column, colIndex) in groupedCategories" :key="colIndex" class="column">
+          <div v-for="categorie in column" :key="categorie.categorie_id" class="book-card">
+            <RouterLink :to="`/categories/${categorie.categorie_id}/books`" class="card-link">
+              <div class="card-content">
+                <h4 class="book-title">{{ categorie.nom }}</h4>
+              </div>
+            </RouterLink>
+          </div>
         </div>
       </div>
     </section>
@@ -28,14 +31,24 @@ const router = useRouter()
 const loading = ref(true)
 const categories = ref([])
 
+//To place every category correctly and max 10 in a coloumn
+const groupedCategories = ref([])
+
+function groupBy10(list) {
+  const groups = []
+  for (let i = 0; i < list.length; i += 10) {
+    groups.push(list.slice(i, i + 10))
+  }
+  return groups
+}
+
 // Book data loading from API
 onMounted(async () => {
-  // Fetch books from API
   try {
     const response = await fetch('http://localhost:9999/api/categories')
     const result = await response.json()
-    // If the response has the structure { message: "...", data: [...] }
     categories.value = result
+    groupedCategories.value = groupBy10(result)
   } catch (error) {
     console.error('Error loading categories:', error)
   } finally {
@@ -46,32 +59,94 @@ onMounted(async () => {
 
 <style scoped>
 .accueil-container {
-  max-width: 97.5em;
-  margin: 9.375em auto 6.25em auto; /* Center horizontally and add space at the top and bottom */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(180deg, #ffffff, #f0f4f8);
+  max-width: 1200px;
+  margin: 4em auto;
+  padding: 2em;
+  background: linear-gradient(145deg, #f9f9f9, #e6ecf3);
   border-radius: 1em;
-  box-shadow: 0 0 1.25em rgba(0, 0, 0, 0.05);
-  padding: 2.25em;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', sans-serif;
 }
 
-.hero-section {
+.section-title {
   text-align: center;
-  margin-top: 2em; /* Adjust this value to be smaller */
+  font-size: 2.4em;
+  margin-bottom: 1.5em;
+  color: #2d3e50;
+  font-weight: 700;
+}
+.columns-wrapper {
+  display: flex;
+  gap: 2em;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.hero-section h1 {
-  padding-top: 1.25em;
-  font-size: 2.8em;
-  color: #2c3e50;
-  margin-bottom: 1.25em;
-  animation: fadeIn 1s ease-in;
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
 }
 
+.loading {
+  text-align: center;
+  font-size: 1.2em;
+  color: #888;
+  padding: 2em;
+}
+
+.books-grid {
+  display: grid;
+  gap: 2em;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(auto-fit, minmax(13.75em, 1fr));
+  justify-content: center;
+  animation: fadeIn 0.8s ease-in;
+}
+
+.book-card {
+  background: #ffffff;
+  border-radius: 0.75em;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.book-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.card-link {
+  text-decoration: none;
+  display: block;
+  height: 100%;
+  color: inherit;
+}
+
+.card-content {
+  padding: 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.book-title {
+  font-size: 1.4em;
+  font-weight: 600;
+  text-align: center;
+  color: #34495e;
+  word-break: break-word;
+}
+
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-1.5625em);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -79,158 +154,18 @@ onMounted(async () => {
   }
 }
 
-.site-description {
-  font-size: 1.1em;
-  line-height: 1.6;
-  color: #555;
-  max-width: 50em;
-  margin: 0 auto;
-}
-
-.quick-links {
-  display: flex;
-  justify-content: center;
-  gap: 1.25em;
-  margin-bottom: 2.5em;
-}
-
-.quick-link {
-  padding: 0.625em 1.25em;
-  background-color: #b6e1c6;
-  color: white;
-  text-decoration: none;
-  border-radius: 0.25em;
-  transition: background-color 0.3s;
-}
-
-.quick-link:hover {
-  background-color: #9bc9b4;
-}
-
-.books-section {
-  margin-bottom: 3.125em;
-}
-
-.section-title {
-  font-size: 2.5em;
-  color: #2c3e50;
-  margin: 1.25em 1.25em;
-  text-align: center;
-}
-
-.books-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 15.625em);
-  justify-content: center;
-  gap: 1.875em;
-}
-
-.book-card {
-  background-color: #f8f9fa;
-  border-radius: 0.5em;
-  box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-}
-
-.book-card:hover {
-  transform: translateY(-0.9375em);
-  box-shadow: 0 0.625em 1.25em rgba(0, 0, 0, 0.12);
-}
-
-.book-title {
-  font-size: 1.7em;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 0.3125em;
-}
-
-.book-cover {
-  width: 100%;
-  height: 23.75em;
-  object-fit: cover;
-  border-radius: 0.25em;
-  margin-bottom: 0.625em;
-}
-
-.book-info {
-  padding: 0.9375em;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
-}
-
-.see-more-container {
-  text-align: center;
-  margin-top: 1.25em;
-}
-
-.see-more-btn {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 0.75em 1.5em;
-  font-size: 1.5em;
-  border-radius: 0.375em;
-  cursor: pointer;
-  transition: background-color 0.5s ease;
-  margin-bottom: 1.25em;
-}
-
-.see-more-btn:hover {
-  background-color: #3a78c2;
-}
-
-.book-author {
-  color: #666;
-  font-size: 0.9em;
-}
-
-@media (max-width: 48em) {
-  .quick-links {
-    flex-direction: column;
-    align-items: center;
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .section-title {
+    font-size: 2em;
   }
 
-  .books-grid {
-    grid-template-columns: 1fr;
+  .card-content {
+    padding: 1em;
   }
 
-  .book-cover {
-    width: 100%;
-    height: 12.5em;
-    object-fit: cover;
-    border-radius: 0.25em;
-    margin-bottom: 0.625em;
-  }
-
-  .loading {
-    text-align: center;
-    padding: 1.25em;
-    font-style: italic;
-    color: #666;
-  }
-
-  @media (max-width: 75em) {
-    .books-grid {
-      grid-template-columns: repeat(4, 1fr); /* планшет, 4 книги в ряд */
-    }
-  }
-
-  @media (max-width: 62em) {
-    .books-grid {
-      grid-template-columns: repeat(3, 1fr); /* маленькие планшеты */
-    }
-  }
-  @media (max-width: 30em) {
-    .books-grid {
-      grid-template-columns: 1fr; /* мобильный */
-    }
-
-    .book-cover {
-      height: 12.5em;
-    }
+  .book-title {
+    font-size: 1.2em;
   }
 }
 </style>
