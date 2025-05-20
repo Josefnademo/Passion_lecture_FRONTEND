@@ -4,7 +4,10 @@
       v-for="star in 5"
       :key="star"
       class="star"
-      :class="{ active: star <= (readOnly ? initialRating : rating) }"
+      :class="{
+        active: star <= (readOnly ? initialRating : hoverRating || rating),
+        'hover-active': star <= hoverRating && !readOnly,
+      }"
       @click="!readOnly && setRating(star)"
       @mouseover="!readOnly && setHoverRating(star)"
       @mouseleave="!readOnly && resetHoverRating()"
@@ -45,6 +48,11 @@ export default {
       this.hoverRating = 0
     },
   },
+  watch: {
+    initialRating(newValue) {
+      this.rating = newValue
+    },
+  },
 }
 </script>
 
@@ -61,9 +69,13 @@ export default {
   transition: color 0.2s;
 }
 
-.star.active,
-.star:hover {
+.star.active {
   color: #ffd700;
+}
+
+.star.hover-active {
+  color: #ffd700;
+  opacity: 0.7;
 }
 
 .star-rating[readonly] .star {

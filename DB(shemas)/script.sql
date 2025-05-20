@@ -47,7 +47,7 @@ CREATE TABLE t_evaluer(
    utilisateur_fk INT,
    livre_fk INT,
    commentaire VARCHAR(500),
-   note VARCHAR(5),
+   note INT NOT NULL CHECK (note >= 0 AND note <= 10),
    PRIMARY KEY(utilisateur_fk, livre_fk),
    FOREIGN KEY(utilisateur_fk) REFERENCES t_utilisateur(utilisateur_id),
    FOREIGN KEY(livre_fk) REFERENCES t_livre(livre_id)

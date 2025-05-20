@@ -5,7 +5,7 @@ import path from "path";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
 import bookRouter from "./routes/books/books.js";
-import noteRouter from "./routes/books/notes.js";
+import commentsRouter from "./routes/books/comments.js";
 import categoryRouter from "./routes/categories/categories.js";
 import categoryBooksRouter from "./routes/categories/books.js";
 import authorBooksRouter from "./routes/authors/books.js";
@@ -22,8 +22,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Book routes
 app.use("/api/books", bookRouter);
-
-app.use("/api/books/", noteRouter);
+app.use("/api/books", commentsRouter);
 
 // Category routes
 app.use("/api/categories", categoryRouter);
