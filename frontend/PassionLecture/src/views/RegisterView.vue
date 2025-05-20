@@ -20,20 +20,41 @@
         />
       </div>
       <div class="form-actions">
-        <button type="button" class="cancel-button" @click="handleCancel">Cancel</button>
-        <button type="submit" class="confirm-button">Confirm</button>
+        <button class="cancel-button" type="button" @click="handleCancel">Cancel</button>
+
+        <button
+          type="submit"
+          :class="['confirm-button', { active: buttonActive }]"
+          :disabled="!buttonActive"
+        >
+          Confirm
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 const name = ref('')
 const password = ref(null)
 const confirmPassword = ref(null)
+
+const buttonActive = computed(() => {
+  if (
+    password.value === confirmPassword.value &&
+    password.value?.length > 8 &&
+    name.value?.length > 2
+  ) {
+    return true
+  }
+})
+
 const handleSubmit = () => {
   // Form submission logic would go here
+  const formData = new FormData()
+  formData.append('name', name.value)
+  formData.append('password', password.value)
   console.log('Form submitted:')
   // You'd typically validate the form and handle API calls here
 }
@@ -50,6 +71,26 @@ const handleCancel = () => {
 </script>
 
 <style scoped>
+.confirm-button.disabled {
+  background-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.confirm-button.disabled:hover {
+  background-color: #ccc;
+  color: #888;
+}
+.confirm-button {
+  padding: 8px 12px;
+  background-color: lightgray;
+  border: none;
+}
+
+.confirm-button.active {
+  background-color: green;
+  color: white;
+}
 .container {
   max-width: 1200px;
   margin: 0 auto;
