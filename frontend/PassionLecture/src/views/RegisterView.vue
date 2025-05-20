@@ -41,7 +41,11 @@ const password = ref(null)
 const confirmPassword = ref(null)
 
 const buttonActive = computed(() => {
-  if (password.value === confirmPassword.value && password.value?.length > 8) {
+  if (
+    password.value === confirmPassword.value &&
+    password.value?.length > 8 &&
+    name.value?.length > 2
+  ) {
     return true
   }
 })
