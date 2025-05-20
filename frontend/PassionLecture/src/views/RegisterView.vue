@@ -29,7 +29,7 @@
 
 <script setup>
 import { ref } from 'vue'
-const name = ref(null)
+const name = ref('')
 const password = ref(null)
 const confirmPassword = ref(null)
 const handleSubmit = () => {
@@ -40,9 +40,9 @@ const handleSubmit = () => {
 const handleCancel = () => {
   // Cancel logic - for example, redirect or reset form
 
-  name = ''
-  password = ''
-  confirmPassword = ''
+  name.value = ''
+  password.value = ''
+  confirmPassword.value = ''
 
   // You might also want to navigate away:
   // this.$router.push('/');
