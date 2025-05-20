@@ -1,6 +1,8 @@
 import { sequelize, Book, Evaluate } from "../db/sequelize.js";
 import { Op } from "sequelize";
 import { success } from "../helper.js";
+import { CategoryModel } from "../model/CategoryModel.js";
+import { WriterModel } from "../model/WriterModel.js";
 
 const bookController = {
   async getBookByUserId(req, res) {
@@ -22,15 +24,62 @@ const bookController = {
   // Create a new book
   async createBook(req, res) {
     try {
-      const book = await Book.create(req.body);
+      const {
+        titre,
+        annee_edition,
+        resume,
+        editeur,
+        nombre_de_page,
+        category_nom,
+        writer_nom,
+      } = req.body;
+
+      const lien_image = req.file ? "/uploads/" + req.file.filename : null;
+
+      const t_category = sequelize.models.t_category;
+      const t_ecrivain = sequelize.models.t_ecrivain;
+
+      // Find or create a category
+      let category = await t_category.findOne({ where: { nom: category_nom } });
+      if (!category) {
+        category = await t_category.create({ nom: category_nom });
+      }
+
+      // Find or create a writer
+      const [prenom, ...nomParts] = writer_nom.trim().split(" ");
+      const nom_de_famille = nomParts.join(" ") || "";
+
+      let writer = await t_ecrivain.findOne({
+        where: { prenom, nom_de_famille },
+      });
+      if (!writer) {
+        writer = await t_ecrivain.create({ prenom, nom_de_famille });
+      }
+
+      // Create a book
+      const book = await Book.create({
+        titre,
+        annee_edition,
+        resume,
+        editeur,
+        nombre_de_page,
+        lien_image,
+        category_id: category.categorie_id,
+        writer_id: writer.ecrivain_id,
+        user_id: req.user?.id || 1,
+      });
+
       res
         .status(201)
-        .json(success(`Le livre ${book.titre} a bien été créé !`, book));
+        .json(
+          success(`The book ${book.titre} has been created successfully!`, book)
+        );
     } catch (error) {
-      console.log("❌ Error in createBook:", error);
-      res
-        .status(500)
-        .json({ message: "Erreur lors de la création du livre.", data: error });
+      console.error("Error while creating the book:", error);
+      res.status(500).json({
+        message: "Error while creating the book.",
+        data: error.message,
+      });
     }
   },
 

@@ -1,6 +1,7 @@
 import express from "express";
 import { sequelize, initDb, Book } from "./db/sequelize.js";
 import cors from "cors";
+import path from "path";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
 import bookRouter from "./routes/books/books.js";
@@ -36,6 +37,9 @@ app.use("/api/users", userRouter);
 
 // Auth routes
 app.use("/api/auth/login", loginRouter);
+
+// Makes the uploads folder accessible at /uploads
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Initialize database and start server
 const startServer = async () => {

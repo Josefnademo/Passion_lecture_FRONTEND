@@ -30,7 +30,16 @@
           @click="router.push(`/details/${book.livre_id}`)"
           style="cursor: pointer"
         >
-          <img v-if="book.lien_image" :src="book.lien_image" :alt="book.titre" class="book-cover" />
+          <img
+            v-if="book.lien_image"
+            :src="
+              book.lien_image.startsWith('http')
+                ? book.lien_image
+                : `http://localhost:9999${book.lien_image}`
+            "
+            :alt="book.titre"
+            class="book-cover"
+          />
           <div class="book-info">
             <h4 class="book-title">{{ book.titre }}</h4>
             <p class="book-author" v-if="book.writer">

@@ -12,13 +12,23 @@
       <input v-model.number="pages" type="number" placeholder="Book's number of pages" required />
 
       <strong>Category</strong>
-      <input v-model.number="category" type="number" placeholder="Book's category" required />
+      <input v-model="category" type="text" placeholder="Book's category name" required />
 
       <strong>Writer</strong>
-      <input v-model.number="writer" type="number" placeholder="Book's writer" required />
+      <input
+        v-model="writer"
+        type="text"
+        placeholder="Writer full name (ex: Jean Dupont)"
+        required
+      />
 
       <!--Select image -->
-      <input type="file" @change="handleImage" accept="image/png, image/jpeg, image/jpg" />
+      <input
+        type="file"
+        name="image"
+        @change="handleImage"
+        accept="image/png, image/jpeg, image/jpg, image/gif, "
+      />
 
       <button type="submit">Add</button>
     </form>
@@ -62,32 +72,31 @@ const getUserIdFromToken = () => {
 
 // This method is called when you submit the form
 const submitBook = async () => {
-  const token = localStorage.getItem('token')
+  /* const token = localStorage.getItem('token')
   if (!token) {
     message.value = 'User is not authorized.'
     return
   }
+*/
+  const userId = getUserIdFromToken() || 1 // temporarily 1 if there is no token
 
-  const userId = getUserIdFromToken()
+  const formData = new FormData()
+  formData.append('titre', title.value)
+  formData.append('annee_edition', year.value)
+  formData.append('nombre_de_page', pages.value)
+  formData.append('category_nom', category.value)
+  formData.append('writer_nom', writer.value)
+
+  if (image.value) {
+    formData.append('image', image.value) //important: must match with `upload.single("image")`
+  }
 
   try {
     const res = await fetch('http://localhost:9999/api/books', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`, // IMPORTANT: we transfer the token
-      },
-      body: JSON.stringify({
-        titre: title.value,
-        annee_edition: year.value,
-        nombre_de_page: pages.value,
-        category_id: category.value,
-        writer_id: writer.value,
-        lien_image: image.value,
-        user_id: userId, // can be removed, if the backend itself takes the userId from the token
-      }),
+      body: formData,
+      // DO NOT specify Content-Type manually! The browser will set the multipart/form-data boundaries automatically
     })
-
     const data = await res.json()
 
     if (res.ok) {
