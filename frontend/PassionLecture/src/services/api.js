@@ -1,62 +1,82 @@
-import axios from 'axios'
+//
+// This is not used for this project, my teammates and I decided to use fetch directly instead of AXIOS.
+//
 
-// Create an axios instance with base configuration
-const apiClient = axios.create({
-  baseURL: 'http://localhost:9999/api/',
-  withCredentials: false,
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    Authorization: token,
-  },
-  timeout: 10000,
-})
-
-let token = localStorage.getItem('token') || null
-
-// Add request interceptor for auth tokens if needed
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  },
-)
+const API_URL = 'http://localhost:9999/api'
 
 export default {
-  login(credentials) {
-    return apiClient.post('/login', credentials).then((response) => {
-      const newToken = response.data.token // Stocker le token reçu = response.data.token // Stocker le token reçu
-      localStorage.setItem('token', `Bearer ${newToken}`)
-      apiClient.defaults.headers.common['Authorization'] = localStorage.getItem('token') // Ajouter le token aux headers
-      return response
+  async login(credentials) {
+    const response = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
     })
+    const data = await response.json()
+    if (data.token) {
+      localStorage.setItem('token', `Bearer ${data.token}`)
+    }
+    return data
   },
 
-  getAllBooks(title = null) {
-    if (title != null && title.title.length > 2) {
-      return apiClient.get('/books?titre=' + title.title)
-    }
-    return apiClient.get('/books')
+  async getAllBooks(title = null) {
+    const url =
+      title && title.title.length > 2 ? `${API_URL}/books?titre=${title.title}` : `${API_URL}/books`
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: localStorage.getItem('token') || '',
+      },
+    })
+    return response.json()
   },
-  getBookById(id) {
-    return apiClient.get(`/books/${id}`)
+
+  async getBookById(id) {
+    const response = await fetch(`${API_URL}/books/${id}`, {
+      headers: {
+        Authorization: localStorage.getItem('token') || '',
+      },
+    })
+    return response.json()
   },
-  getAllAuthors() {
-    return apiClient.get('/authors')
+
+  async getAllAuthors() {
+    const response = await fetch(`${API_URL}/authors`, {
+      headers: {
+        Authorization: localStorage.getItem('token') || '',
+      },
+    })
+    return response.json()
   },
-  getAllCategories() {
-    return apiClient.get('/categories/')
+
+  async getAllCategories() {
+    const response = await fetch(`${API_URL}/categories/`, {
+      headers: {
+        Authorization: localStorage.getItem('token') || '',
+      },
+    })
+    return response.json()
   },
-  getUserById(id) {
-    return apiClient.get(`/users/${id}`)
+
+  async getUserById(id) {
+    const response = await fetch(`${API_URL}/users/${id}`, {
+      headers: {
+        Authorization: localStorage.getItem('token') || '',
+      },
+    })
+    return response.json()
   },
-  createBook(data) {
-    return apiClient.post(`/books`, data)
+
+  async createBook(data) {
+    const response = await fetch(`${API_URL}/books`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('token') || '',
+      },
+      body: JSON.stringify(data),
+    })
+    return response.json()
   },
 }
