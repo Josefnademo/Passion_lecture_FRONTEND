@@ -1,5 +1,6 @@
 import express from "express";
 import { sequelize, User, Evaluate } from "../../db/sequelize.js";
+import jwt from "jsonwebtoken";
 import { success } from "../../helper.js";
 import bcrypt from "bcrypt";
 
@@ -68,12 +69,16 @@ userRouter.post("/", async (req, res) => {
       id: user.utilisateur_id,
       username: user.username,
     });
+    const token = jwt.sign({ userId: user.utilisateur_id }, "yourSecretKey", {
+      expiresIn: "24h",
+    });
 
     res.status(201).json(
       success("User created successfully", {
         utilisateur_id: user.utilisateur_id,
         username: user.username,
         isAdmin: user.isAdmin,
+        token: token,
       })
     );
   } catch (error) {

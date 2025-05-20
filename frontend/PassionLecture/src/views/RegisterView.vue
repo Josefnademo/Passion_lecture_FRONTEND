@@ -37,27 +37,54 @@
 <script setup>
 import { ref, computed } from 'vue'
 const name = ref('')
-const password = ref(null)
-const confirmPassword = ref(null)
+const password = ref('')
+const confirmPassword = ref('')
 
 const buttonActive = computed(() => {
   if (
     password.value === confirmPassword.value &&
-    password.value?.length > 8 &&
+    password.value?.length > 7 &&
     name.value?.length > 2
   ) {
     return true
   }
 })
 
-const handleSubmit = () => {
-  // Form submission logic would go here
-  const formData = new FormData()
-  formData.append('name', name.value)
-  formData.append('password', password.value)
-  console.log('Form submitted:')
-  // You'd typically validate the form and handle API calls here
+const handleSubmit = async () => {
+  try {
+    const response = await fetch(`http://localhost:9999/api/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: name.value,
+        password: password.value,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.error('Server error:', data)
+      alert(`Error: ${data.message}`)
+      return
+    }
+    try {
+      console.log('Received token from backend:', data.data.token)
+      localStorage.setItem('token', data.data.token)
+    } catch (e) {
+      console.log(e)
+    }
+    alert('Registration successful!')
+
+    handleCancel()
+  } catch (error) {
+    console.error('Error during fetch:', error)
+    alert('An unexpected error occurred.')
+  }
 }
+
 const handleCancel = () => {
   // Cancel logic - for example, redirect or reset form
 
