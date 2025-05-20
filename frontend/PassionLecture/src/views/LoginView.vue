@@ -4,58 +4,106 @@
     <form class="register-form" @submit.prevent="handleSubmit">
       <div class="form-group">
         <label class="form-label">Name</label>
-        <input type="text" v-model="formData.name" placeholder="Name" class="form-input" />
+        <input type="text" v-model="name" placeholder="Albert" class="form-input" />
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input
-          type="password"
-          v-model="formData.password"
-          placeholder="************"
-          class="form-input"
-        />
+        <input type="password" v-model="password" placeholder="************" class="form-input" />
       </div>
-
       <div class="form-actions">
-        <button type="button" class="cancel-button" @click="handleCancel">Cancel</button>
-        <button type="submit" class="confirm-button">Confirm</button>
+        <button class="cancel-button" type="button" @click="handleCancel">Cancel</button>
+
+        <button
+          type="submit"
+          :class="['confirm-button', { active: buttonActive }]"
+          :disabled="!buttonActive"
+        >
+          Confirm
+        </button>
       </div>
     </form>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Register',
-  data() {
-    return {
-      formData: {
-        name: '',
-        password: '',
-        confirmPassword: '',
+<script setup>
+import { ref, computed } from 'vue'
+const name = ref('')
+const password = ref('')
+
+const buttonActive = computed(() => {
+  if (password.value && name.value) {
+    return true
+  }
+})
+
+const handleSubmit = async () => {
+  try {
+    const response = await fetch(`http://localhost:9999/api/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        username: name.value,
+        password: password.value,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.error('Server error:', data)
+      alert(`Error: ${data.message}`)
+      return
     }
-  },
-  methods: {
-    handleSubmit() {
-      // Form submission logic would go here
-      console.log('Form submitted:', this.formData)
-      // You'd typically validate the form and handle API calls here
-    },
-    handleCancel() {
-      // Cancel logic - for example, redirect or reset form
-      this.formData = {
-        name: '',
-        password: '',
-      }
-      // You might also want to navigate away:
-      // this.$router.push('/');
-    },
-  },
+    try {
+      console.log('Received token from backend:', data.data.token)
+      localStorage.setItem('token', data.data.token)
+    } catch (e) {
+      console.log(e)
+    }
+    alert('Registration successful!')
+
+    handleCancel()
+  } catch (error) {
+    console.error('Error during fetch:', error)
+    alert('An unexpected error occurred.')
+  }
+}
+
+const handleCancel = () => {
+  // Cancel logic - for example, redirect or reset form
+
+  name.value = ''
+  password.value = ''
+  confirmPassword.value = ''
+
+  // You might also want to navigate away:
+  // this.$router.push('/');
 }
 </script>
 
 <style scoped>
+.confirm-button.disabled {
+  background-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.confirm-button.disabled:hover {
+  background-color: #ccc;
+  color: #888;
+}
+.confirm-button {
+  padding: 8px 12px;
+  background-color: lightgray;
+  border: none;
+}
+
+.confirm-button.active {
+  background-color: green;
+  color: white;
+}
 .container {
   max-width: 1200px;
   margin: 0 auto;
