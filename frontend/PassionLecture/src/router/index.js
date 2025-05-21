@@ -6,22 +6,22 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/Acceuil.vue'),
+      component: () => import('../views/AcceuilView.vue'),
     },
     {
       path: '/categories',
       name: 'categories',
-      component: () => import('../views/Category.vue'),
+      component: () => import('../views/CategoryView.vue'),
     },
     {
       path: '/categories/:categorie_id/books',
       name: 'bookByCategory',
-      component: () => import('../views/BookByCategory.vue'),
+      component: () => import('../views/BookByCategoryView.vue'),
     },
     {
       path: '/users/:user_id',
       name: 'userById',
-      component: () => import('../views/Profile.vue'),
+      component: () => import('../views/ProfileView.vue'),
     },
     {
       path: '/my-books',
@@ -37,7 +37,7 @@ const router = createRouter({
     {
       path: '/create',
       name: 'Create',
-      component: () => import('../views/CreateBook.vue'),
+      component: () => import('../views/CreateBookView.vue'),
       meta: { requiresAuth: true },
     },
     {
