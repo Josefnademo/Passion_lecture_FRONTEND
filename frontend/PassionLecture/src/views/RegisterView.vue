@@ -73,6 +73,7 @@ const handleSubmit = async () => {
     try {
       console.log('Received token from backend:', data.data.token)
       localStorage.setItem('token', data.data.token)
+      localStorage.setItem('userId', data.data.userId)
     } catch (e) {
       console.log(e)
     }

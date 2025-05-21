@@ -10,14 +10,25 @@
       <router-link to="/create" class="create-button">Create Your First Book</router-link>
     </div>
     <div v-else class="books-grid">
-      <div v-for="book in books" :key="book.id" class="book-card">
-        <img :src="book.cover_image" :alt="book.title" class="book-cover" />
+      <div v-for="book in books" :key="book.livre_id" class="book-card">
+        <img
+          v-if="book.lien_image"
+          :src="
+            book.lien_image.startsWith('http')
+              ? book.lien_image
+              : `http://localhost:9999${book.lien_image}`
+          "
+          :alt="book.titre"
+          class="book-cover"
+        />
         <div class="book-info">
-          <h3>{{ book.title }}</h3>
-          <p>{{ book.description }}</p>
+          <h3>{{ book.titre }}</h3>
+          <p>{{ book.resume }}</p>
           <div class="book-actions">
-            <router-link :to="'/details/' + book.id" class="view-details">View Details</router-link>
-            <router-link :to="'/edit/' + book.id" class="edit-button">Edit Book</router-link>
+            <router-link :to="'/details/' + book.livre_id" class="view-details"
+              >View Details</router-link
+            >
+            <router-link :to="'/edit/' + book.livre_id" class="edit-button">Edit Book</router-link>
           </div>
         </div>
       </div>
@@ -43,25 +54,34 @@ export default {
         const userId = localStorage.getItem('userId')
         const token = localStorage.getItem('token')
 
-        if (!userId || !token) {
+        if (!token) {
           throw new Error('User not authenticated')
         }
 
-        const response = await fetch(`/api/users/${userId}/books`, {
+        const response = await fetch(`http://localhost:9999/api/books/${userId}/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
 
         if (!response.ok) {
-          throw new Error('Failed to fetch books')
+          const errorText = await response.text()
+          console.error('Server response:', errorText)
+          throw new Error(`Failed to fetch books: ${response.status} ${response.statusText}`)
         }
-        const data = await response.json()
-        books.value = data
+
+        const contentType = response.headers.get('content-type')
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server did not return JSON')
+        }
+
+        const result = await response.json()
+        console.log('Received books data:', result)
+        books.value = result.data || []
       } catch (err) {
+        console.error('Error fetching books:', err)
         error.value = err.message || 'Failed to load your books'
         if (err.message === 'User not authenticated') {
-          // Redirect to login if not authenticated
           router.push('/login')
         }
       } finally {
