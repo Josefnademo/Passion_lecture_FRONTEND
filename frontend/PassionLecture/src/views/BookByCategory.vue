@@ -15,7 +15,7 @@
 // We import the necessary functions
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import DisplayBooks from './DisplayBooks.vue'
+import DisplayBooks from '../components/DisplayBooks.vue'
 
 // Initialize the router
 const router = useRouter()

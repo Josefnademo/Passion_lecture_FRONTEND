@@ -6,29 +6,22 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/HomeView.vue'),
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // Dynamic import creates a separate file (chunk)
-      // which will be (lazy-loaded)loaded only when this route is visited
-      component: () => import('../views/AboutView.vue'),
+      component: () => import('../views/Acceuil.vue'),
     },
     {
       path: '/categories',
       name: 'categories',
-      component: () => import('../views/CategoryView.vue'),
+      component: () => import('../views/Category.vue'),
     },
     {
       path: '/categories/:categorie_id/books',
       name: 'bookByCategory',
-      component: () => import('../views/BookByCategoryView.vue'),
+      component: () => import('../views/BookByCategory.vue'),
     },
     {
       path: '/users/:user_id',
       name: 'userById',
-      component: () => import('../components/Profile.vue'),
+      component: () => import('../views/Profile.vue'),
     },
     {
       path: '/my-books',
@@ -39,12 +32,13 @@ const router = createRouter({
     {
       path: '/details/:id',
       name: 'Details',
-      component: () => import('../components/DetailsView.vue'),
+      component: () => import('../views/DetailsView.vue'),
     },
     {
       path: '/create',
       name: 'Create',
-      component: () => import('../components/CreateBook.vue'),
+      component: () => import('../views/CreateBook.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/edit/:id',
@@ -78,9 +72,10 @@ const router = createRouter({
 
 // Navigation guard to check authentication
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('userId')
+  const token = localStorage.getItem('token')
+  const userId = localStorage.getItem('userId')
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  if (to.meta.requiresAuth && (!token || !userId)) {
     // Redirect to login if trying to access protected route while not authenticated
     next('/login')
   } else {

@@ -100,9 +100,11 @@
 </template>
 
 <script>
-import StarRating from './star-rating.vue'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import StarRating from '../components/star-rating.vue'
 import api from '../services/api'
-import DisplayBooks from './DisplayBooks.vue'
+import DisplayBooks from '../components/DisplayBooks.vue'
 
 export default {
   name: 'BookPage',

@@ -40,10 +40,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { RouterLink, RouterView } from 'vue-router'
-import { useRoute } from 'vue-router'
-import DisplayBooks from './DisplayBooks.vue'
+import { useRouter, useRoute } from 'vue-router'
+import DisplayBooks from '../components/DisplayBooks.vue'
 
 // Initialize the router
 const router = useRouter()
