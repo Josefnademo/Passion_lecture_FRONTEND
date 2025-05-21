@@ -46,9 +46,7 @@ import DisplayBooks from '../components/DisplayBooks.vue'
 // Initialize the router
 const router = useRouter()
 const route = useRoute()
-
-const userId = route.params.user_id
-console.log(userId)
+//const userId = ref('')
 
 const user = ref(null)
 const books = ref([])
@@ -56,7 +54,15 @@ const loading = ref(true)
 
 onMounted(async () => {
   // Fetch books from API
+
   try {
+    const userId = localStorage.getItem('CurrentUserId')
+    console.log(userId)
+    if (!userId) {
+      alert('please log in first')
+      return
+    }
+
     const response = await fetch(`http://localhost:9999/api/users/${userId}`)
     const result = await response.json()
     // If the response has the structure { message: "...", data: [...] }

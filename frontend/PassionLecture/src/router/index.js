@@ -19,7 +19,7 @@ const router = createRouter({
       component: () => import('../views/BookByCategoryView.vue'),
     },
     {
-      path: '/users/:user_id',
+      path: '/users',
       name: 'userById',
       component: () => import('../views/ProfileView.vue'),
     },

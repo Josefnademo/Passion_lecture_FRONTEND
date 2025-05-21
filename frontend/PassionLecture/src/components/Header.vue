@@ -13,7 +13,7 @@
       <router-link to="/register" class="profile-link">
         <p>Register</p>
       </router-link>
-      <router-link to="/users/:user_id" class="profile-link">
+      <router-link to="/users" class="profile-link">
         <img src="/images/userProfile.png" class="user-icon" alt="User Profile" />
       </router-link>
     </div>
@@ -56,10 +56,12 @@ const tryToken = async () => {
 
     if (result.valid) {
       console.log('User authenticated with token:', result.user)
+      localStorage.setItem('CurrentUserId', result.user.id)
       // Optional: Redirect to dashboard or profile
     } else {
       console.log('Invalid or expired token')
       localStorage.removeItem('token') // clear invalid token
+      localStorage.removeItem('CurrentUserId') // clear invalid UserId
     }
   } catch (e) {
     console.error('Token validation failed:', e)
