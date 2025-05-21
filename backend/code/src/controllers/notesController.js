@@ -2,9 +2,9 @@ import { sequelize } from "../db/sequelize.js";
 import { Evaluate, Book, User } from "../db/sequelize.js";
 import { Op } from "sequelize";
 
-const NotesController= {
+const NotesController = {
   // Get evaluations (notes) for a specific book
-   async getEvaluationsForBook(req, res) {
+  async getEvaluationsForBook(req, res) {
     try {
       const { book_id } = req.params; // Assuming you're getting it from the route params
 
@@ -12,9 +12,15 @@ const NotesController= {
       if (!book_id) {
         return res.status(400).json({ message: "Book ID is required" });
       }
-
       const evaluations = await Evaluate.findAll({
         where: { book_id },
+        include: [
+          {
+            model: User,
+            as: "user",
+            attributes: ["username"],
+          },
+        ],
       });
 
       return res.status(200).json(evaluations);
@@ -25,7 +31,7 @@ const NotesController= {
   },
 
   // Create a new evaluation (note)
-   async createEvaluation(req, res) {
+  async createEvaluation(req, res) {
     try {
       const { commentaire, note, user_id, book_id } = req.body;
 
@@ -48,7 +54,7 @@ const NotesController= {
   },
 
   // Get an evaluation (note) by its ID
-   async getEvaluationById(req, res) {
+  async getEvaluationById(req, res) {
     try {
       const { noteId } = req.params;
 
@@ -74,7 +80,7 @@ const NotesController= {
   },
 
   // Update an evaluation (note) by ID
-   async updateEvaluation(req, res) {
+  async updateEvaluation(req, res) {
     try {
       const { noteId } = req.params;
       const { commentaire, note } = req.body;
@@ -101,7 +107,7 @@ const NotesController= {
   },
 
   // Delete an evaluation (note) by ID
-   async deleteEvaluation(req, res) {
+  async deleteEvaluation(req, res) {
     try {
       const { noteId } = req.params;
 
@@ -125,5 +131,5 @@ const NotesController= {
         .json({ message: "Server error while deleting evaluation." });
     }
   },
-}
+};
 export default NotesController;

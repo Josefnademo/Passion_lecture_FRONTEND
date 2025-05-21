@@ -54,8 +54,10 @@
               <div v-if="evaluations && evaluations.length > 0" class="comments-list">
                 <div v-for="evaluation in evaluations" :key="evaluation.id" class="comment-card">
                   <div class="comment-header">
-                    <p class="commenter-name">User #{{ evaluation.user_id }}</p>
-                    <star-rating :initial-rating="evaluation.note" :read-only="true" />
+                    <p class="commenter-name">
+                      {{ evaluation.user ? evaluation.user.username : 'Anonymous' }}
+                    </p>
+                    <star-rating :initial-rating="evaluation.note / 2" :read-only="true" />
                   </div>
                   <p class="comment-text">{{ evaluation.commentaire }}</p>
                   <p class="comment-date">
@@ -161,12 +163,10 @@ export default {
         }
 
         // Fetch evaluations
-        const evaluationsResponse = await fetch(
-          `http://localhost:9999/api/books/${bookId}/evaluations`,
-        )
+        const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`)
         const evaluationsResult = await evaluationsResponse.json()
-        console.log('Evaluations:', evaluationsResult.data)
-        this.evaluations = evaluationsResult.data
+        console.log('Evaluations:', evaluationsResult)
+        this.evaluations = evaluationsResult
       } catch (error) {
         console.error('Error loading details:', error)
       } finally {
@@ -194,30 +194,26 @@ export default {
       }
 
       try {
-        const response = await fetch(
-          `http://localhost:9999/api/books/${this.book.livre_id}/evaluations`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${user.token}`,
-            },
-            body: JSON.stringify({
-              note: this.rating,
-              commentaire: this.commentText,
-              user_id: user.userId,
-              book_id: this.book.livre_id,
-            }),
+        const bookId = this.$route.params.id
+        const response = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`,
           },
-        )
+          body: JSON.stringify({
+            note: this.rating * 2, // Convert 5-star rating to 10-point scale
+            commentaire: this.commentText,
+            user_id: user.userId,
+            book_id: bookId,
+          }),
+        })
 
         if (response.ok) {
           // Refresh evaluations
-          const evaluationsResponse = await fetch(
-            `http://localhost:9999/api/books/${this.book.livre_id}/evaluations`,
-          )
+          const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`)
           const evaluationsResult = await evaluationsResponse.json()
-          this.evaluations = evaluationsResult.data
+          this.evaluations = evaluationsResult
           this.resetForm()
         } else {
           const errorData = await response.json()

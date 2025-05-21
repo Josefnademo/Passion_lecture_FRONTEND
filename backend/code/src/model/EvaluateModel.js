@@ -47,7 +47,7 @@ const EvaluateModel = (sequelize, DataTypes) => {
 
   Evaluate.associate = (models) => {
     Evaluate.belongsTo(models.t_user, {
-      foreignKey: "utilisateur_id",
+      foreignKey: "user_id",
       as: "user",
       onDelete: "CASCADE",
     });
