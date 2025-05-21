@@ -29,7 +29,7 @@
 import { ref, computed } from 'vue'
 const name = ref('')
 const password = ref('')
-
+const token = ref('')
 const buttonActive = computed(() => {
   if (password.value && name.value) {
     return true
@@ -38,7 +38,8 @@ const buttonActive = computed(() => {
 
 const handleSubmit = async () => {
   try {
-    const response = await fetch(`http://localhost:9999/api/users`, {
+    console.log(token.value)
+    const response = await fetch(`http://localhost:9999/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,12 +58,12 @@ const handleSubmit = async () => {
       return
     }
     try {
-      console.log('Received token from backend:', data.data.token)
-      localStorage.setItem('token', data.data.token)
+      console.log('Received token from backend:', data)
+      localStorage.setItem('token', data.data)
     } catch (e) {
       console.log(e)
     }
-    alert('Registration successful!')
+    alert('Login successful!')
 
     handleCancel()
   } catch (error) {
@@ -70,13 +71,11 @@ const handleSubmit = async () => {
     alert('An unexpected error occurred.')
   }
 }
-
 const handleCancel = () => {
   // Cancel logic - for example, redirect or reset form
 
   name.value = ''
   password.value = ''
-  confirmPassword.value = ''
 
   // You might also want to navigate away:
   // this.$router.push('/');

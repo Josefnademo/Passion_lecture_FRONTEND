@@ -31,7 +31,40 @@ import { ref, onMounted, computed } from 'vue'
 // TODO: Uncomment when lucide-vue-next is installed
 // import { Menu, User } from 'lucide-vue-next'
 import Sidebar from './Sidebar.vue'
+const token = ref('')
+onMounted(async () => {
+  tryToken()
+})
+const tryToken = async () => {
+  const savedToken = localStorage.getItem('token')
 
+  if (!savedToken) {
+    console.log('No token found')
+    return
+  }
+
+  try {
+    const response = await fetch(`http://localhost:9999/api/auth/login/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: savedToken }),
+    })
+
+    const result = await response.json()
+
+    if (result.valid) {
+      console.log('User authenticated with token:', result.user)
+      // Optional: Redirect to dashboard or profile
+    } else {
+      console.log('Invalid or expired token')
+      localStorage.removeItem('token') // clear invalid token
+    }
+  } catch (e) {
+    console.error('Token validation failed:', e)
+  }
+}
 const dropMenu = '/images/dropMenu.png'
 const sidebarOpen = ref(false)
 const isSidebarAvailable = computed(() => !!Sidebar)
