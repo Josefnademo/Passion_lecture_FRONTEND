@@ -73,7 +73,7 @@ const router = createRouter({
 // Navigation guard to check authentication
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  const userId = localStorage.getItem('userId')
+  const userId = localStorage.getItem('CurrentUserId')
 
   if (to.meta.requiresAuth && (!token || !userId)) {
     // Redirect to login if trying to access protected route while not authenticated

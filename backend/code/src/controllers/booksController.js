@@ -34,6 +34,14 @@ const bookController = {
         writer_nom,
       } = req.body;
 
+      // Validate user exists first
+      const user = await sequelize.models.t_user.findByPk(req.body.userId);
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found. Cannot create book for non-existent user.",
+        });
+      }
+
       const lien_image = req.file ? "/uploads/" + req.file.filename : null;
 
       const t_category = sequelize.models.t_category;
@@ -55,7 +63,6 @@ const bookController = {
       if (!writer) {
         writer = await t_ecrivain.create({ prenom, nom_de_famille });
       }
-
       // Create a book
       const book = await Book.create({
         titre,
@@ -66,7 +73,7 @@ const bookController = {
         lien_image,
         category_id: category.categorie_id,
         writer_id: writer.ecrivain_id,
-        user_id: req.user?.id || 1,
+        user_id: req.body.userId,
       });
 
       res

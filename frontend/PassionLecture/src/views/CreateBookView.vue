@@ -78,7 +78,8 @@ const submitBook = async () => {
     return
   }
 */
-  const userId = getUserIdFromToken() || 1 // temporarily 1 if there is no token
+  const userId = localStorage.getItem('CurrentUserId') // temporarily 1 if there is no token
+//const userId = getUserIdFromToken() || 1 // temporarily 1 if there is no token
 
   const formData = new FormData()
   formData.append('titre', title.value)
@@ -86,7 +87,9 @@ const submitBook = async () => {
   formData.append('nombre_de_page', pages.value)
   formData.append('category_nom', category.value)
   formData.append('writer_nom', writer.value)
+  formData.append('userId', userId)
 
+ // const body = { formData }
   if (image.value) {
     formData.append('image', image.value) //important: must match with `upload.single("image")`
   }
