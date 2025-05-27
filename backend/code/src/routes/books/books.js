@@ -171,7 +171,7 @@ router.get("/:id", bookController.getBookById);
  *       500:
  *         description: Server error
  */
-router.put("/:id", bookController.updateBook);
+router.put("/:id", uploadSingleImage, bookController.updateBook);
 
 /**
  * @swagger

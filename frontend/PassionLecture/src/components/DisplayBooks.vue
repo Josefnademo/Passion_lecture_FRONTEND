@@ -38,6 +38,10 @@ export default defineComponent({
     router: {
       required: true,
     },
+    showAll: {
+      type: Boolean,
+      default: true,
+    },
   },
 })
 </script>

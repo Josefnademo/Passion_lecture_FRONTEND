@@ -51,7 +51,7 @@ export default {
     const fetchMyBooks = async () => {
       try {
         loading.value = true
-        const userId = localStorage.getItem('userId')
+        const userId = localStorage.getItem('CurrentUserId')
         const token = localStorage.getItem('token')
 
         if (!token) {
