@@ -84,6 +84,25 @@ const NotesController = {
       return res.status(500).json({ message: "Server error." });
     }
   },
+  //////////////////////////////////////////////////////
+  async getEvaluationByUserId(req, res) {
+    try {
+      const { userId } = req.params;
+
+      const evaluations = await Evaluate.findAll({
+        where: { user_id: userId },
+      });
+
+      if (!evaluations) {
+        return res.status(404).json({ message: "Evaluations not found." });
+      }
+      //const evalNumber = evaluations.length;
+      return res.json(evaluations);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Server error." });
+    }
+  },
 
   // Update an evaluation (note) by ID
   async updateEvaluation(req, res) {
