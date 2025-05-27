@@ -16,6 +16,9 @@
       <router-link :to="profileLink" class="profile-link" v-if="isLoggedIn">
         <img src="/images/userProfile.png" class="user-icon" alt="User Profile" />
       </router-link>
+      <button @click="disconnect" class="disconnect-button" v-if="isLoggedIn">
+        <p>Disconnect</p>
+      </button>
     </div>
 
     <Sidebar
@@ -38,7 +41,9 @@ const sidebarOpen = ref(false)
 const isSidebarAvailable = computed(() => !!Sidebar)
 
 const isLoggedIn = computed(() => {
-  return !!localStorage.getItem('token')
+  const token = localStorage.getItem('token')
+  const userId = localStorage.getItem('CurrentUserId')
+  return !!(token && userId)
 })
 
 const profileLink = computed(() => {
@@ -93,6 +98,12 @@ const setSidebarOpen = (value) => {
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value
+}
+
+const disconnect = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('CurrentUserId')
+  window.location.href = '/'
 }
 </script>
 
@@ -171,5 +182,20 @@ const toggleSidebar = () => {
 .loginButtons {
   display: flex;
   gap: 1em;
+  align-items: center;
+}
+
+.disconnect-button {
+  background: none;
+  border: none;
+  color: var(--primary-green, #b3dec1);
+  transition: color 0.3s;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1em;
+}
+
+.disconnect-button:hover {
+  opacity: 0.8;
 }
 </style>
