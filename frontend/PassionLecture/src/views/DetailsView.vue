@@ -283,14 +283,17 @@ onMounted(() => {
 
 .book-image {
   position: relative;
-  aspect-ratio: 1/1;
+  aspect-ratio: 2/3;
   margin-bottom: 1rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
 }
 
 .book-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background-color: #f8f9fa;
 }
 
 .pdf-link {
