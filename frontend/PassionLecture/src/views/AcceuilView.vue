@@ -22,35 +22,7 @@
         </button>
       </div>
       <div v-if="loading" class="loading">Loading...</div>
-      <div v-else class="books-grid">
-        <div
-          v-for="book in showAll ? books : books.slice(0, 5)"
-          :key="book.livre_id"
-          class="book-card"
-          @click="router.push(`/details/${book.livre_id}`)"
-          style="cursor: pointer"
-        >
-          <img
-            v-if="book.lien_image"
-            :src="
-              book.lien_image.startsWith('http')
-                ? book.lien_image
-                : `http://localhost:9999${book.lien_image}`
-            "
-            :alt="book.titre"
-            class="book-cover"
-          />
-          <div class="book-info">
-            <h4 class="book-title">{{ book.titre }}</h4>
-            <p class="book-author" v-if="book.writer">
-              {{ book.writer.nom }} {{ book.writer.prenom }}
-            </p>
-            <p class="book-category" v-if="book.category">
-              {{ book.category.nom }}
-            </p>
-          </div>
-        </div>
-      </div>
+      <DisplayBooks :books="books" :router="router" :show-all="showAll" />
     </section>
   </div>
 </template>
@@ -59,6 +31,7 @@
 // We import the necessary functions
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import DisplayBooks from '../components/DisplayBooks.vue'
 
 // Initialize the router
 const router = useRouter()
@@ -88,6 +61,25 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.see-more-container {
+  text-align: center;
+  margin-top: 1.25em;
+}
+
+.see-more-btn:hover {
+  background-color: #3a78c2;
+}
+.see-more-btn {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 0.75em 1.5em;
+  font-size: 1.5em;
+  border-radius: 0.375em;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+  margin-bottom: 1.25em;
+}
 .accueil-container {
   max-width: 97.5em;
   margin: 9.375em auto 6.25em auto; /* Center horizontally and add space at the top and bottom */
@@ -159,121 +151,5 @@ onMounted(async () => {
   color: #2c3e50;
   margin: 1.25em 1.25em;
   text-align: center;
-}
-
-.books-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 15.625em);
-  justify-content: center;
-  gap: 1.875em;
-}
-
-.book-card {
-  background-color: #f8f9fa;
-  border-radius: 0.5em;
-  box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-}
-
-.book-card:hover {
-  transform: translateY(-0.9375em);
-  box-shadow: 0 0.625em 1.25em rgba(0, 0, 0, 0.12);
-}
-
-.book-title {
-  font-size: 1.7em;
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 0.3125em;
-}
-
-.book-cover {
-  width: 100%;
-  height: 23.75em;
-  object-fit: cover;
-  border-radius: 0.25em;
-  margin-bottom: 0.625em;
-}
-
-.book-info {
-  padding: 0.9375em;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
-}
-
-.see-more-container {
-  text-align: center;
-  margin-top: 1.25em;
-}
-
-.see-more-btn {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 0.75em 1.5em;
-  font-size: 1.5em;
-  border-radius: 0.375em;
-  cursor: pointer;
-  transition: background-color 0.5s ease;
-  margin-bottom: 1.25em;
-}
-
-.see-more-btn:hover {
-  background-color: #3a78c2;
-}
-
-.book-author {
-  color: #666;
-  font-size: 0.9em;
-}
-
-@media (max-width: 48em) {
-  .quick-links {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .books-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .book-cover {
-    width: 100%;
-    height: 12.5em;
-    object-fit: cover;
-    border-radius: 0.25em;
-    margin-bottom: 0.625em;
-  }
-
-  .loading {
-    text-align: center;
-    padding: 1.25em;
-    font-style: italic;
-    color: #666;
-  }
-
-  @media (max-width: 75em) {
-    .books-grid {
-      grid-template-columns: repeat(4, 1fr); /* планшет, 4 книги в ряд */
-    }
-  }
-
-  @media (max-width: 62em) {
-    .books-grid {
-      grid-template-columns: repeat(3, 1fr); /* маленькие планшеты */
-    }
-  }
-  @media (max-width: 30em) {
-    .books-grid {
-      grid-template-columns: 1fr; /* мобильный */
-    }
-
-    .book-cover {
-      height: 12.5em;
-    }
-  }
 }
 </style>

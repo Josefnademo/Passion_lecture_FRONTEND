@@ -26,7 +26,7 @@ const UserModel = (sequelize, DataTypes) => {
     },
     {
       timestamps: true,
-      createdAt: "date_creation",
+      createdAt: true,
       updatedAt: false,
       freezeTableName: true,
     }

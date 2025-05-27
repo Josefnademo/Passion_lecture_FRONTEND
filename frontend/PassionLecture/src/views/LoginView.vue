@@ -81,7 +81,7 @@ const handleCancel = () => {
   password.value = ''
 
   // You might also want to navigate away:
-  // this.$router.push('/');
+  //this.$router.push('/')
 }
 </script>
 

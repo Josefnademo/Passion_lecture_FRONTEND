@@ -17,16 +17,13 @@
 
         <div class="info-item">
           <h2 class="info-label">Comments</h2>
-          <p v-if="user" class="info-value">{{ user.utilisateur_id }}</p>
+          <p v-if="user" class="info-value">{{ comments }}</p>
         </div>
 
         <div class="info-item">
           <h2 class="info-label">Member Since</h2>
-          <p v-if="user" class="info-value">{{ user.date_creation }}</p>
+          <p v-if="user" class="info-value">{{ user.createdAt.slice(0, 10) }}</p>
         </div>
-      </div>
-      <div class="button-container">
-        <button class="edit-button" @click="editProfile">Edit Profile</button>
       </div>
     </div>
     <div class="info-item">
@@ -51,7 +48,7 @@ const route = useRoute()
 const user = ref(null)
 const books = ref([])
 const loading = ref(true)
-
+const comments = ref()
 onMounted(async () => {
   // Fetch books from API
 
@@ -67,6 +64,7 @@ onMounted(async () => {
     const result = await response.json()
     // If the response has the structure { message: "...", data: [...] }
     user.value = result.data
+    console.log(user.value)
     try {
       const answer = await fetch(`http://localhost:9999/api/books/${userId}/user`)
       const outcome = await answer.json()
@@ -75,18 +73,20 @@ onMounted(async () => {
     } catch (error) {
       console.error('Error getting users books:', error)
     }
+    try {
+      const answer = await fetch(`http://localhost:9999/api/books/${userId}/notes`)
+      const outcome = await answer.json()
+      console.log(outcome)
+      comments.value = outcome.length
+    } catch (e) {
+      console.log(e)
+    }
   } catch (error) {
     console.error('Error loading user:', error)
   } finally {
     loading.value = false
   }
 })
-
-// Methods
-const editProfile = () => {
-  console.log('Edit profile clicked')
-  // Logic to edit the profile can be added here
-}
 </script>
 
 <style scoped>

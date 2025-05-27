@@ -251,6 +251,7 @@ userRouter.get("/:id", async (req, res) => {
         utilisateur_id: user.utilisateur_id,
         username: user.username,
         isAdmin: user.isAdmin,
+        createdAt: user.createdAt,
       })
     );
   } catch (error) {
