@@ -73,7 +73,7 @@
                 <h4 class="new-comment-title">Add Your Evaluation</h4>
                 <form @submit.prevent="handleCommentSubmit">
                   <div class="rating-container">
-                    <star-rating v-model:rating="rating" />
+                    <star-rating v-model="rating" />
                   </div>
                   <textarea
                     v-model="commentText"
@@ -82,8 +82,17 @@
                     placeholder="Write your evaluation here..."
                   ></textarea>
                   <div class="form-actions">
-                    <button type="button" class="cancel-button" @click="resetForm">Cancel</button>
-                    <button type="submit" class="submit-button">Submit Evaluation</button>
+                    <button
+                      type="button"
+                      class="cancel-button"
+                      @click="resetForm"
+                      :disabled="submitting"
+                    >
+                      Cancel
+                    </button>
+                    <button type="submit" class="submit-button" :disabled="submitting">
+                      {{ submitting ? 'Submitting...' : 'Submit Evaluation' }}
+                    </button>
                   </div>
                 </form>
               </div>
@@ -101,131 +110,146 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import StarRating from '../components/star-rating.vue'
 import api from '../services/api'
 import DisplayBooks from '../components/DisplayBooks.vue'
 
-export default {
-  name: 'BookPage',
-  components: {
-    StarRating,
-  },
-  data() {
-    return {
-      commentText: '',
-      rating: 0,
-      book: null,
-      loading: true,
-      evaluations: [],
-      loadingEvaluations: true,
-      author: null,
-      category: null,
-      isLoggedIn: false,
+const commentText = ref('')
+const rating = ref(0)
+const book = ref(null)
+const loading = ref(true)
+const evaluations = ref([])
+const loadingEvaluations = ref(true)
+const author = ref(null)
+const category = ref(null)
+const isLoggedIn = ref(false)
+const submitting = ref(false)
+
+const route = useRoute()
+
+// Check if user is logged in
+const token = localStorage.getItem('token')
+const userId = localStorage.getItem('userId')
+isLoggedIn.value = !!(token && userId)
+
+const loadBookDetails = async () => {
+  const bookId = route.params.id
+  try {
+    // Fetch book details
+    const bookResponse = await fetch(`http://localhost:9999/api/books/${bookId}`)
+    const bookResult = await bookResponse.json()
+    console.log('Book details:', bookResult.data)
+    book.value = bookResult.data
+
+    // Fetch author details if writer_id exists
+    if (book.value.writer_id) {
+      const authorResponse = await fetch(
+        `http://localhost:9999/api/authors/${book.value.writer_id}`,
+      )
+      const authorResult = await authorResponse.json()
+      console.log('Author details:', authorResult.data)
+      author.value = authorResult.data
     }
-  },
-  created() {
-    // Check if user is logged in
-    const user = JSON.parse(localStorage.getItem('user'))
-    this.isLoggedIn = !!user
-    this.loadBookDetails()
-  },
-  methods: {
-    async loadBookDetails() {
-      const bookId = this.$route.params.id
-      try {
-        // Fetch book details
-        const bookResponse = await fetch(`http://localhost:9999/api/books/${bookId}`)
-        const bookResult = await bookResponse.json()
-        console.log('Book details:', bookResult.data)
-        this.book = bookResult.data
 
-        // Fetch author details if writer_id exists
-        if (this.book.writer_id) {
-          const authorResponse = await fetch(
-            `http://localhost:9999/api/authors/${this.book.writer_id}`,
-          )
-          const authorResult = await authorResponse.json()
-          console.log('Author details:', authorResult.data)
-          this.author = authorResult.data
-        }
+    // Fetch category details if category_id exists
+    if (book.value.category_id) {
+      const categoryResponse = await fetch(
+        `http://localhost:9999/api/categories/${book.value.category_id}`,
+      )
+      const categoryResult = await categoryResponse.json()
+      console.log('Category details:', categoryResult)
+      category.value = categoryResult
+    }
 
-        // Fetch category details if category_id exists
-        if (this.book.category_id) {
-          const categoryResponse = await fetch(
-            `http://localhost:9999/api/categories/${this.book.category_id}`,
-          )
-          const categoryResult = await categoryResponse.json()
-          console.log('Category details:', categoryResult)
-          this.category = categoryResult
-        }
-
-        // Fetch evaluations
-        const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`)
-        const evaluationsResult = await evaluationsResponse.json()
-        console.log('Evaluations:', evaluationsResult)
-        this.evaluations = evaluationsResult
-      } catch (error) {
-        console.error('Error loading details:', error)
-      } finally {
-        this.loading = false
-        this.loadingEvaluations = false
-      }
-    },
-    setRating(value) {
-      this.rating = value
-    },
-    resetForm() {
-      this.commentText = ''
-      this.rating = 0
-    },
-    async handleCommentSubmit() {
-      if (!this.commentText || !this.rating) {
-        alert('Please provide both a rating and a comment')
-        return
-      }
-
-      const user = JSON.parse(localStorage.getItem('user'))
-      if (!user) {
-        alert('Please login to submit an evaluation')
-        return
-      }
-
-      try {
-        const bookId = this.$route.params.id
-        const response = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: JSON.stringify({
-            note: this.rating * 2, // Convert 5-star rating to 10-point scale
-            commentaire: this.commentText,
-            user_id: user.userId,
-            book_id: bookId,
-          }),
-        })
-
-        if (response.ok) {
-          // Refresh evaluations
-          const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`)
-          const evaluationsResult = await evaluationsResponse.json()
-          this.evaluations = evaluationsResult
-          this.resetForm()
-        } else {
-          const errorData = await response.json()
-          alert(errorData.message || 'Failed to submit evaluation')
-        }
-      } catch (error) {
-        console.error('Error submitting evaluation:', error)
-        alert('Error submitting evaluation')
-      }
-    },
-  },
+    // Fetch evaluations with proper headers
+    const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
+      headers: {
+        Authorization: localStorage.getItem('token') || '',
+      },
+    })
+    if (!evaluationsResponse.ok) {
+      throw new Error('Failed to fetch evaluations')
+    }
+    const evaluationsResult = await evaluationsResponse.json()
+    console.log('Evaluations:', evaluationsResult)
+    evaluations.value = evaluationsResult
+  } catch (error) {
+    console.error('Error loading details:', error)
+  } finally {
+    loading.value = false
+    loadingEvaluations.value = false
+  }
 }
+
+const resetForm = () => {
+  commentText.value = ''
+  rating.value = 0
+}
+
+const handleCommentSubmit = async () => {
+  if (!commentText.value || !rating.value) {
+    alert('Please provide both a rating and a comment')
+    return
+  }
+
+  if (submitting.value) return
+
+  submitting.value = true
+  const token = localStorage.getItem('token')
+  const userId = localStorage.getItem('userId')
+
+  if (!token || !userId) {
+    alert('Please login to submit an evaluation')
+    return
+  }
+
+  try {
+    const bookId = route.params.id
+    const response = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify({
+        note: rating.value * 2, // Convert 5-star rating to 10-point scale
+        commentaire: commentText.value,
+        user_id: userId,
+        book_id: bookId,
+      }),
+    })
+
+    if (response.ok) {
+      // Refresh evaluations
+      const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      if (!evaluationsResponse.ok) {
+        throw new Error('Failed to fetch updated evaluations')
+      }
+      const evaluationsResult = await evaluationsResponse.json()
+      evaluations.value = evaluationsResult
+      resetForm()
+    } else {
+      const errorData = await response.json()
+      alert(errorData.message || 'Failed to submit evaluation')
+    }
+  } catch (error) {
+    console.error('Error submitting evaluation:', error)
+    alert('Error submitting evaluation')
+  } finally {
+    submitting.value = false
+  }
+}
+
+onMounted(() => {
+  loadBookDetails()
+})
 </script>
 
 <style scoped>
@@ -391,6 +415,12 @@ export default {
 
 .submit-button:hover {
   background-color: #9ed3ac;
+}
+
+.submit-button:disabled,
+.cancel-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Responsive styles */

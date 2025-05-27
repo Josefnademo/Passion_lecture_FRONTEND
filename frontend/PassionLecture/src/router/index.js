@@ -19,9 +19,10 @@ const router = createRouter({
       component: () => import('../views/BookByCategoryView.vue'),
     },
     {
-      path: '/users',
+      path: '/users/:userId',
       name: 'userById',
       component: () => import('../views/ProfileView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/my-books',
