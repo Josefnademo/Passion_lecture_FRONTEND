@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 const name = ref('')
 const password = ref('')
 const token = ref('')
@@ -35,41 +35,6 @@ const buttonActive = computed(() => {
     return true
   }
 })
-onMounted(async () => {
-  tryToken()
-})
-const tryToken = async () => {
-  const savedToken = localStorage.getItem('token')
-
-  if (!savedToken) {
-    console.log('No token found')
-    return
-  }
-
-  try {
-    const response = await fetch(`http://localhost:9999/api/auth/login/token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ token: savedToken }),
-    })
-
-    const result = await response.json()
-
-    if (result.valid) {
-      console.log('User authenticated with token:', result.user)
-      localStorage.setItem('CurrentUserId', result.user.id)
-      // Optional: Redirect to dashboard or profile
-    } else {
-      console.log('Invalid or expired token')
-      localStorage.removeItem('token') // clear invalid token
-      localStorage.removeItem('CurrentUserId') // clear invalid UserId
-    }
-  } catch (e) {
-    console.error('Token validation failed:', e)
-  }
-}
 
 const handleSubmit = async () => {
   try {
@@ -94,8 +59,9 @@ const handleSubmit = async () => {
     }
     try {
       console.log('Received token from backend:', data)
-      localStorage.setItem('token', data.data)
-      localStorage.setItem('CurrentUserId', data.userId)
+      const decodedToken = JSON.parse(atob(data.data.split('.')[1]))
+      localStorage.setItem('token', `Bearer ${data.data}`)
+      localStorage.setItem('userId', decodedToken.userId)
     } catch (e) {
       console.log(e)
     }
