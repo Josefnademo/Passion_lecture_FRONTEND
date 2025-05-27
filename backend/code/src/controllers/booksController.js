@@ -143,12 +143,56 @@ const bookController = {
         return res.status(404).json({ message: "Livre introuvable." });
       }
 
+      const {
+        titre,
+        annee_edition,
+        resume,
+        editeur,
+        nombre_de_page,
+        category_nom,
+        writer_nom,
+      } = req.body;
+
+      // Handle image upload
+      if (req.file) {
+        req.body.lien_image = "/uploads/" + req.file.filename;
+      }
+
+      // Handle category
+      if (category_nom) {
+        const t_category = sequelize.models.t_category;
+        let category = await t_category.findOne({
+          where: { nom: category_nom },
+        });
+        if (!category) {
+          category = await t_category.create({ nom: category_nom });
+        }
+        req.body.category_id = category.categorie_id;
+      }
+
+      // Handle writer
+      if (writer_nom) {
+        const t_ecrivain = sequelize.models.t_ecrivain;
+        const [prenom, ...nomParts] = writer_nom.trim().split(" ");
+        const nom_de_famille = nomParts.join(" ") || "";
+
+        let writer = await t_ecrivain.findOne({
+          where: { prenom, nom_de_famille },
+        });
+        if (!writer) {
+          writer = await t_ecrivain.create({ prenom, nom_de_famille });
+        }
+        req.body.writer_id = writer.ecrivain_id;
+      }
+
       await book.update(req.body);
       res.json(success("Livre mis à jour avec succès.", book));
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Erreur lors de la mise à jour.", data: error });
+      console.error("Error while updating the book:", error);
+      res.status(500).json({
+        message: "Erreur lors de la mise à jour.",
+        data: error.message,
+      });
     }
   },
 
