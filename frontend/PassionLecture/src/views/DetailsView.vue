@@ -3,7 +3,13 @@
     <div v-if="loading" class="loading">Loading...</div>
     <div v-else-if="!book" class="error">Book not found</div>
     <div v-else class="book-container">
-      <h1 class="book-title">{{ book.titre }}</h1>
+      <div class="book-header">
+        <h1 class="book-title">{{ book.titre }}</h1>
+        <div class="rating-display" v-if="evaluations.length > 0">
+          <star-rating :initial-rating="averageRating" :read-only="true" />
+          <span class="rating-text">({{ evaluations.length }} reviews)</span>
+        </div>
+      </div>
 
       <div class="book-content">
         <div class="book-image-container">
@@ -111,7 +117,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import StarRating from '../components/star-rating.vue'
 import api from '../services/api'
@@ -127,6 +133,12 @@ const author = ref(null)
 const category = ref(null)
 const isLoggedIn = ref(false)
 const submitting = ref(false)
+
+const averageRating = computed(() => {
+  if (!evaluations.value || evaluations.value.length === 0) return 0
+  const sum = evaluations.value.reduce((acc, evaluation) => acc + evaluation.note, 0)
+  return sum / evaluations.value.length / 2
+})
 
 const route = useRoute()
 
@@ -264,11 +276,20 @@ onMounted(() => {
   margin: 0 auto;
 }
 
+.book-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .book-title {
   font-size: 1.875rem;
   font-weight: bold;
   color: #3b6992;
-  margin: 1rem 0 1.5rem 0;
+  margin: 0;
+  text-align: center;
 }
 
 .book-content {
@@ -494,5 +515,17 @@ onMounted(() => {
 
 .login-link:hover {
   color: #7abc94;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.rating-text {
+  color: #7a8ea3;
+  font-size: 0.9rem;
 }
 </style>
