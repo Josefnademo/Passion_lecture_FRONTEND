@@ -132,7 +132,7 @@ const route = useRoute()
 
 // Check if user is logged in
 const token = localStorage.getItem('token')
-const userId = localStorage.getItem('userId')
+const userId = localStorage.getItem('CurrentUserId')
 isLoggedIn.value = !!(token && userId)
 
 const loadBookDetails = async () => {
@@ -199,7 +199,7 @@ const handleCommentSubmit = async () => {
 
   submitting.value = true
   const token = localStorage.getItem('token')
-  const userId = localStorage.getItem('userId')
+  const userId = localStorage.getItem('CurrentUserId')
 
   if (!token || !userId) {
     alert('Please login to submit an evaluation')

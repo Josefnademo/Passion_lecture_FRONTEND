@@ -61,13 +61,14 @@ const handleSubmit = async () => {
       console.log('Received token from backend:', data)
       const decodedToken = JSON.parse(atob(data.data.split('.')[1]))
       localStorage.setItem('token', `Bearer ${data.data}`)
-      localStorage.setItem('userId', decodedToken.userId)
+      localStorage.setItem('CurrentUserId', decodedToken.userId)
     } catch (e) {
       console.log(e)
     }
     alert('Login successful!')
 
-    handleCancel()
+    // Redirect to home page and force a refresh
+    window.location.href = '/'
   } catch (error) {
     console.error('Error during fetch:', error)
     alert('An unexpected error occurred.')
