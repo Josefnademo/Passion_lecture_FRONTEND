@@ -20,7 +20,13 @@ const NotesController = {
             as: "user",
             attributes: ["username"],
           },
+          {
+            model: Book,
+            as: "t_livre",
+            attributes: ["titre"],
+          },
         ],
+        order: [["created", "DESC"]],
       });
 
       return res.status(200).json(evaluations);
