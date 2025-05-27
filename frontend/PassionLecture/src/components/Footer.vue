@@ -19,6 +19,9 @@
         </ul>
       </div>
     </div>
+    <router-link to="/admin" style="display: flex; justify-content: center">
+      <div>AdminPage</div>
+    </router-link>
   </footer>
 </template>
 
