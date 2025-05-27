@@ -117,6 +117,7 @@ const handleSubmit = async () => {
     alert('Registration successful!')
 
     handleCancel()
+    window.location.href = '/'
   } catch (error) {
     console.error('Error during fetch:', error)
     alert('An unexpected error occurred.')
