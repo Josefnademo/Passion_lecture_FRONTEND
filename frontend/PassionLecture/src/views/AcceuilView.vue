@@ -22,35 +22,7 @@
         </button>
       </div>
       <div v-if="loading" class="loading">Loading...</div>
-      <div v-else class="books-grid">
-        <div
-          v-for="book in showAll ? books : books.slice(0, 5)"
-          :key="book.livre_id"
-          class="book-card"
-          @click="router.push(`/details/${book.livre_id}`)"
-          style="cursor: pointer"
-        >
-          <img
-            v-if="book.lien_image"
-            :src="
-              book.lien_image.startsWith('http')
-                ? book.lien_image
-                : `http://localhost:9999${book.lien_image}`
-            "
-            :alt="book.titre"
-            class="book-cover"
-          />
-          <div class="book-info">
-            <h4 class="book-title">{{ book.titre }}</h4>
-            <p class="book-author" v-if="book.writer">
-              {{ book.writer.nom }} {{ book.writer.prenom }}
-            </p>
-            <p class="book-category" v-if="book.category">
-              {{ book.category.nom }}
-            </p>
-          </div>
-        </div>
-      </div>
+      <DisplayBooks :books="books" :router="router" />
     </section>
   </div>
 </template>
@@ -59,6 +31,7 @@
 // We import the necessary functions
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import DisplayBooks from '../components/DisplayBooks.vue'
 
 // Initialize the router
 const router = useRouter()
