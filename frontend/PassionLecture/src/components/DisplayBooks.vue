@@ -166,27 +166,6 @@ export default defineComponent({
   text-align: center;
 }
 
-.see-more-container {
-  text-align: center;
-  margin-top: 1.25em;
-}
-
-.see-more-btn {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 0.75em 1.5em;
-  font-size: 1.5em;
-  border-radius: 0.375em;
-  cursor: pointer;
-  transition: background-color 0.5s ease;
-  margin-bottom: 1.25em;
-}
-
-.see-more-btn:hover {
-  background-color: #3a78c2;
-}
-
 .book-author {
   color: #666;
   font-size: 0.9em;
