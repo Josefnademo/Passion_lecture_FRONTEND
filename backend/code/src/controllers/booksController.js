@@ -122,19 +122,31 @@ const bookController = {
   // Get a book by ID
   async getBookById(req, res) {
     try {
-      const book = await Book.findByPk(req.params.id);
-      if (!book) {
-        return res.status(404).json({ message: "Livre introuvable." });
-      }
-      res.json(success(`Livre ${book.titre} trouvé.`, book));
-    } catch (error) {
-      res.status(500).json({
-        message: "Erreur lors de la récupération du livre.",
-        data: error,
+      const book = await Book.findByPk(req.params.id, {
+        include: [
+          { model: sequelize.models.t_category, as: "category" },
+          { model: sequelize.models.t_ecrivain, as: "writer" },
+        ],
       });
+
+      if (!book) {
+        return res.status(404).json({ message: "Book not found" });
+      }
+      //to display writer's name and secondname, and category name
+      const response = {
+        ...book.toJSON(),
+        category_nom: book.category.nom,
+        writer_nom: `${book.writer.prenom} ${book.writer.nom_de_famille}`,
+      };
+
+      return res.json(success("Book found", response));
+    } catch (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({ message: "Internal server error", data: err });
     }
   },
-
   // Update a book
   async updateBook(req, res) {
     try {
