@@ -1,17 +1,27 @@
 <template>
   <div class="container">
+    <!-- Display loading message while data is being fetched -->
     <div v-if="loading" class="loading">Loading...</div>
+
+    <!-- Show error message if book not found -->
     <div v-else-if="!book" class="error">Book not found</div>
+
+    <!-- Display book content once data is available -->
     <div v-else class="book-container">
+      <!-- Header section with title and average rating -->
       <div class="book-header">
         <h1 class="book-title">{{ book.titre }}</h1>
+
+        <!-- Show star rating if evaluations are available -->
         <div class="rating-display" v-if="evaluations.length > 0">
           <star-rating :initial-rating="averageRating" :read-only="true" />
           <span class="rating-text">({{ evaluations.length }} reviews)</span>
         </div>
       </div>
 
+      <!-- Book content section: image, details, resume, and comments -->
       <div class="book-content">
+        <!-- Book image and PDF link -->
         <div class="book-image-container">
           <div class="book-image">
             <img
@@ -28,6 +38,7 @@
           <a :href="book.lien_pdf" class="pdf-link" v-if="book.lien_pdf">PDF Link</a>
         </div>
 
+        <!-- Book details: author, editor, year, etc. -->
         <div class="book-details">
           <div class="author-info">
             <h2 class="author-title">
@@ -47,15 +58,20 @@
             </p>
           </div>
 
+          <!-- Resume/summary of the book -->
           <div class="resume-section" v-if="book.resume">
             <h3 class="section-title">Resume</h3>
             <p class="resume-text">{{ book.resume }}</p>
           </div>
 
+          <!-- Evaluations and form to add new ones -->
           <div class="comments-section">
             <h3 class="section-title">Evaluations</h3>
 
+            <!-- Display while loading evaluations -->
             <div v-if="loadingEvaluations" class="loading">Loading evaluations...</div>
+
+            <!-- Show evaluations if available -->
             <div v-else>
               <div v-if="evaluations && evaluations.length > 0" class="comments-list">
                 <div v-for="evaluation in evaluations" :key="evaluation.id" class="comment-card">
@@ -71,10 +87,13 @@
                   </p>
                 </div>
               </div>
+
+              <!-- Message if no evaluations exist yet -->
               <div v-else class="no-evaluations">
                 No evaluations yet. Be the first to review this book!
               </div>
 
+              <!-- Form to add a new evaluation if user is logged in -->
               <div v-if="isLoggedIn" class="new-comment-card">
                 <h4 class="new-comment-title">Add Your Evaluation</h4>
                 <form @submit.prevent="handleCommentSubmit">
@@ -102,6 +121,8 @@
                   </div>
                 </form>
               </div>
+
+              <!-- Login prompt if user is not logged in -->
               <div v-else class="login-prompt">
                 <p>
                   Please <router-link to="/login" class="login-link">login</router-link> to add your
@@ -123,6 +144,7 @@ import StarRating from '../components/star-rating.vue'
 import api from '../services/api'
 import DisplayBooks from '../components/DisplayBooks.vue'
 
+// Reactive variables
 const commentText = ref('')
 const rating = ref(0)
 const book = ref(null)
@@ -134,59 +156,52 @@ const category = ref(null)
 const isLoggedIn = ref(false)
 const submitting = ref(false)
 
+const route = useRoute()
+
+// Computed average rating (out of 5 stars)
 const averageRating = computed(() => {
   if (!evaluations.value || evaluations.value.length === 0) return 0
   const sum = evaluations.value.reduce((acc, evaluation) => acc + evaluation.note, 0)
   return sum / evaluations.value.length / 2
 })
 
-const route = useRoute()
-
-// Check if user is logged in
+// Determine login status from localStorage
 const token = localStorage.getItem('token')
 const userId = localStorage.getItem('CurrentUserId')
 isLoggedIn.value = !!(token && userId)
 
+// Load book and related details from the API
 const loadBookDetails = async () => {
   const bookId = route.params.id
   try {
-    // Fetch book details
     const bookResponse = await fetch(`http://localhost:9999/api/books/${bookId}`)
     const bookResult = await bookResponse.json()
-    console.log('Book details:', bookResult.data)
     book.value = bookResult.data
 
-    // Fetch author details if writer_id exists
+    // Load author info if available
     if (book.value.writer_id) {
       const authorResponse = await fetch(
         `http://localhost:9999/api/authors/${book.value.writer_id}`,
       )
       const authorResult = await authorResponse.json()
-      console.log('Author details:', authorResult.data)
       author.value = authorResult.data
     }
 
-    // Fetch category details if category_id exists
+    // Load category info if available
     if (book.value.category_id) {
       const categoryResponse = await fetch(
         `http://localhost:9999/api/categories/${book.value.category_id}`,
       )
       const categoryResult = await categoryResponse.json()
-      console.log('Category details:', categoryResult)
       category.value = categoryResult
     }
 
-    // Fetch evaluations with proper headers
+    // Load evaluations/comments
     const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
-      headers: {
-        Authorization: localStorage.getItem('token') || '',
-      },
+      headers: { Authorization: token || '' },
     })
-    if (!evaluationsResponse.ok) {
-      throw new Error('Failed to fetch evaluations')
-    }
+    if (!evaluationsResponse.ok) throw new Error('Failed to fetch evaluations')
     const evaluationsResult = await evaluationsResponse.json()
-    console.log('Evaluations:', evaluationsResult)
     evaluations.value = evaluationsResult
   } catch (error) {
     console.error('Error loading details:', error)
@@ -196,11 +211,13 @@ const loadBookDetails = async () => {
   }
 }
 
+// Reset form fields
 const resetForm = () => {
   commentText.value = ''
   rating.value = 0
 }
 
+// Handle evaluation form submission
 const handleCommentSubmit = async () => {
   if (!commentText.value || !rating.value) {
     alert('Please provide both a rating and a comment')
@@ -208,10 +225,7 @@ const handleCommentSubmit = async () => {
   }
 
   if (submitting.value) return
-
   submitting.value = true
-  const token = localStorage.getItem('token')
-  const userId = localStorage.getItem('CurrentUserId')
 
   if (!token || !userId) {
     alert('Please login to submit an evaluation')
@@ -227,7 +241,7 @@ const handleCommentSubmit = async () => {
         Authorization: token,
       },
       body: JSON.stringify({
-        note: rating.value * 2, // Convert 5-star rating to 10-point scale
+        note: rating.value * 2, // Convert to 10-point scale
         commentaire: commentText.value,
         user_id: userId,
         book_id: bookId,
@@ -235,15 +249,10 @@ const handleCommentSubmit = async () => {
     })
 
     if (response.ok) {
-      // Refresh evaluations
+      // Reload evaluations after submitting
       const evaluationsResponse = await fetch(`http://localhost:9999/api/books/${bookId}/notes`, {
-        headers: {
-          Authorization: token,
-        },
+        headers: { Authorization: token },
       })
-      if (!evaluationsResponse.ok) {
-        throw new Error('Failed to fetch updated evaluations')
-      }
       const evaluationsResult = await evaluationsResponse.json()
       evaluations.value = evaluationsResult
       resetForm()
@@ -259,6 +268,7 @@ const handleCommentSubmit = async () => {
   }
 }
 
+// Run when component mounts
 onMounted(() => {
   loadBookDetails()
 })
