@@ -54,7 +54,6 @@ onMounted(async () => {
 
   try {
     const userId = localStorage.getItem('CurrentUserId')
-    console.log(userId)
     if (!userId) {
       alert('please log in first')
       return
@@ -64,11 +63,9 @@ onMounted(async () => {
     const result = await response.json()
     // If the response has the structure { message: "...", data: [...] }
     user.value = result.data
-    console.log(user.value)
     try {
       const answer = await fetch(`http://localhost:9999/api/books/${userId}/user`)
       const outcome = await answer.json()
-      console.log(outcome.data)
       books.value = outcome.data
     } catch (error) {
       console.error('Error getting users books:', error)
@@ -76,7 +73,6 @@ onMounted(async () => {
     try {
       const answer = await fetch(`http://localhost:9999/api/books/${userId}/notes`)
       const outcome = await answer.json()
-      console.log(outcome)
       comments.value = outcome.length
     } catch (e) {
       console.log(e)
