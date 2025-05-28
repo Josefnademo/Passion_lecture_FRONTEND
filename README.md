@@ -2,7 +2,7 @@
 
 ## 🛠️ Technologies utilisées
 
-Ce projet utilise plusieurs technologies modernes côté frontend et backend :
+**Ce projet utilise plusieurs technologies modernes côté frontend et backend :**
 
 🌐 Frontend
 
