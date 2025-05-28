@@ -2,7 +2,7 @@
 
 ## 🛠️ Technologies utilisées
 
-Ce projet utilise plusieurs technologies modernes côté frontend et backend :
+**Ce projet utilise plusieurs technologies modernes côté frontend et backend :**
 
 🌐 Frontend
 
@@ -59,6 +59,9 @@ git clone https://github.com/Josefnademo/Passion_lecture_FRONTEND/
 ```
 
 5. Exécuter le script PowerShell : Le script **Script_de_demarrage_automatique.ps1** automatise toute l'installation et déploiement
+```bash
+   powershell -ExecutionPolicy Bypass -File .\Script_de_demarrage_automatique.ps1
+```
 
 ## Explication du script PowerShell
 
