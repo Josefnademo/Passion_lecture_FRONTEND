@@ -38,7 +38,6 @@ const buttonActive = computed(() => {
 
 const handleSubmit = async () => {
   try {
-    console.log(token.value)
     const response = await fetch(`http://localhost:9999/api/auth/login`, {
       method: 'POST',
       headers: {

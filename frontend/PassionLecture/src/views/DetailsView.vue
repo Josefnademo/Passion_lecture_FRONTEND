@@ -153,7 +153,6 @@ const loadBookDetails = async () => {
     // Fetch book details
     const bookResponse = await fetch(`http://localhost:9999/api/books/${bookId}`)
     const bookResult = await bookResponse.json()
-    console.log('Book details:', bookResult.data)
     book.value = bookResult.data
 
     // Fetch author details if writer_id exists
@@ -162,7 +161,6 @@ const loadBookDetails = async () => {
         `http://localhost:9999/api/authors/${book.value.writer_id}`,
       )
       const authorResult = await authorResponse.json()
-      console.log('Author details:', authorResult.data)
       author.value = authorResult.data
     }
 
@@ -172,7 +170,6 @@ const loadBookDetails = async () => {
         `http://localhost:9999/api/categories/${book.value.category_id}`,
       )
       const categoryResult = await categoryResponse.json()
-      console.log('Category details:', categoryResult)
       category.value = categoryResult
     }
 

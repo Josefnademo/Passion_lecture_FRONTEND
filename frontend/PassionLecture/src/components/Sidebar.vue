@@ -26,6 +26,10 @@ import { useRoute } from 'vue-router'
 // TODO: Uncomment when lucide-vue-next is installed
 // import { Edit, BookOpen, Layers } from 'lucide-vue-next'
 
+/**
+ * Component that displays a sidebar navigation menu
+ * @component Sidebar
+ */
 export default defineComponent({
   name: 'Sidebar',
   components: {
@@ -35,10 +39,12 @@ export default defineComponent({
     // Layers,
   },
   props: {
+    /** Controls the visibility of the sidebar */
     isOpen: {
       type: Boolean,
       required: true,
     },
+    /** Callback function to close the sidebar */
     onClose: {
       type: Function,
       required: true,
@@ -55,6 +61,7 @@ export default defineComponent({
       BookOpen: 'BookOpen',
     }
 
+    /** Navigation items configuration */
     const navItems = [
       {
         name: 'Create',

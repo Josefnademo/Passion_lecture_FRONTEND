@@ -35,28 +35,44 @@ import { ref, onMounted, computed } from 'vue'
 // import { Menu, User } from 'lucide-vue-next'
 import Sidebar from './Sidebar.vue'
 
-const token = ref('')
-const dropMenu = '/images/dropMenu.png'
-const sidebarOpen = ref(false)
-const isSidebarAvailable = computed(() => !!Sidebar)
+// Reactive state variables
+const token = ref('') // Stores the current authentication token
+const dropMenu = '/images/dropMenu.png' // Menu icon image path
+const sidebarOpen = ref(false) // Controls sidebar visibility
+const isSidebarAvailable = computed(() => !!Sidebar) // Checks if Sidebar component is available
 
+/**
+ * Computed property that checks if user is logged in
+ * @returns {boolean} True if user has valid token and userId
+ */
 const isLoggedIn = computed(() => {
+  // Check both token and userId presence in localStorage
   const token = localStorage.getItem('token')
   const userId = localStorage.getItem('CurrentUserId')
-  return !!(token && userId)
+  return !!(token && userId) // Returns true only if both exist
 })
 
+/**
+ * Computed property that determines user's profile link
+ * @returns {string} User profile URL or login page URL
+ */
 const profileLink = computed(() => {
   const userId = localStorage.getItem('CurrentUserId')
-  return userId ? `/users/${userId}` : '/login'
+  return userId ? `/users/${userId}` : '/login' // Navigate to profile if logged in, otherwise to login
 })
 
+// Lifecycle hook to validate token when component mounts
 onMounted(async () => {
-  await tryToken()
+  await tryToken() // Call token validation on component mount
 })
 
+/**
+ * Validates and refreshes user token
+ * @async
+ * @returns {Promise<void>}
+ */
 const tryToken = async () => {
-  const savedToken = localStorage.getItem('token')
+  const savedToken = localStorage.getItem('token') // Get token from storage
 
   if (!savedToken) {
     console.log('No token found')
@@ -65,15 +81,18 @@ const tryToken = async () => {
   }
 
   // Extract the actual token from "Bearer token" format
-  const actualToken = savedToken.startsWith('Bearer ') ? savedToken.split(' ')[1] : savedToken
+  const actualToken = savedToken.startsWith('Bearer ') 
+    ? savedToken.split(' ')[1] // Remove "Bearer " prefix
+    : savedToken // Use token as is if no prefix
 
   try {
+    // Send POST request to validate token
     const response = await fetch(`http://localhost:9999/api/auth/login/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ token: actualToken }),
+      body: JSON.stringify({ token: actualToken }), // Send token for validation
     })
 
     const result = await response.json()
@@ -84,25 +103,35 @@ const tryToken = async () => {
       localStorage.setItem('CurrentUserId', result.user.id)
     } else {
       console.log('Invalid or expired token')
-      localStorage.removeItem('token') // clear invalid token
-      localStorage.removeItem('CurrentUserId') // also clear userId
+      localStorage.removeItem('token') // Clear invalid token
+      localStorage.removeItem('CurrentUserId') // Clear associated user ID
     }
   } catch (e) {
     console.error('Token validation failed:', e)
   }
 }
 
+/**
+ * Sets the sidebar open state
+ * @param {boolean} value - New state for sidebar visibility
+ */
 const setSidebarOpen = (value) => {
   sidebarOpen.value = value
 }
 
+/**
+ * Toggles the sidebar visibility
+ */
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value
 }
 
+/**
+ * Handles user logout by clearing authentication data
+ */
 const disconnect = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('CurrentUserId')
+  localStorage.removeItem('token') // Remove authentication token
+  localStorage.removeItem('CurrentUserId') // Remove user ID
   window.location.href = '/'
 }
 </script>

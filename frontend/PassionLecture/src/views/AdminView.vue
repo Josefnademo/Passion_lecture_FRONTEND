@@ -60,7 +60,6 @@ export default {
         const result = await response.json()
         user.value = result.data
         isAdmin.value = user.value.isAdmin
-        console.log(isAdmin)
       } catch (e) {
         console.log(e)
       }

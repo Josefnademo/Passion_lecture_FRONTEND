@@ -21,7 +21,6 @@ import DisplayBooks from '../components/DisplayBooks.vue'
 const router = useRouter()
 const route = useRoute()
 const categorieId = route.params.categorie_id
-console.log(categorieId)
 
 // Define the loading state and books array waiting for data to be loaded
 const loading = ref(true)

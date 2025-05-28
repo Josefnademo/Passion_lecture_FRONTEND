@@ -22,17 +22,24 @@
 </template>
 
 <script>
+/**
+ * Star rating component that allows users to rate items with half-star precision
+ * @component StarRating
+ */
 export default {
   name: 'StarRating',
   props: {
+    /** Current rating value (v-model) */
     modelValue: {
       type: Number,
       default: 0,
     },
+    /** Initial rating value */
     initialRating: {
       type: Number,
       default: 0,
     },
+    /** If true, prevents rating changes */
     readOnly: {
       type: Boolean,
       default: false,
@@ -40,39 +47,74 @@ export default {
   },
   data() {
     return {
+      /** Current local rating value */
       localRating: this.modelValue || this.initialRating,
+      /** Stores rating during hover */
       hoverRating: 0,
     }
   },
   methods: {
+    /**
+     * Calculates the fill percentage for each star based on current rating
+     * @param {number} star - The star index (1-5)
+     * @returns {Object} CSS clip-path style to fill the star
+     */
     getStarStyle(star) {
+      // Use initial rating if read-only, otherwise use hover or local rating
       const currentRating = this.readOnly
         ? this.initialRating
         : this.hoverRating || this.localRating
+      
+      // Calculate percentage of star to fill
+      // Each star represents 20% of the total rating (100% / 5 stars)
       const percentage = Math.min(100, Math.max(0, (currentRating - (star - 1)) * 100))
+      
+      // Return CSS clip-path to fill the star
       return {
         clipPath: `inset(0 ${100 - percentage}% 0 0)`,
       }
     },
+    /**
+     * Handles selection of half-star ratings
+     * @param {number} star - The star index (1-5)
+     */
     handleHalfStar(star) {
-      if (this.readOnly) return
+      if (this.readOnly) return // Prevent changes if read-only
+      
+      // Set hover state to half-star
       this.hoverRating = star - 0.5
+      // Update actual rating
       this.setRating(star - 0.5)
     },
+    /**
+     * Handles full-star rating selection
+     * @param {number} star - The star index (1-5)
+     */
     handleFullStar(star) {
       if (this.readOnly) return
       this.hoverRating = star
       this.setRating(star)
     },
+    /**
+     * Updates the rating value and emits the change
+     * @param {number} value - The new rating value (0-5)
+     */
     setRating(value) {
+      // Update local state
       this.localRating = value
+      // Emit change to parent component
       this.$emit('update:modelValue', value)
     },
+    /** Resets the hover rating */
     resetHoverRating() {
       this.hoverRating = 0
     },
   },
   watch: {
+    /**
+     * Updates local rating when modelValue changes
+     * @param {number} newValue - The new rating value
+     */
     modelValue: {
       handler(newValue) {
         this.localRating = newValue

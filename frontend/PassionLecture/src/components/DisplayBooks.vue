@@ -30,16 +30,23 @@
 <script>
 import { defineComponent } from 'vue'
 
+/**
+ * Component that displays a grid of books with their covers and information
+ * @component DisplayBooks
+ */
 export default defineComponent({
   name: 'DisplayBooks',
   props: {
+    /** Array of books to display */
     books: {
       type: Array,
       required: true,
     },
+    /** Router instance for navigation */
     router: {
       required: true,
     },
+    /** Controls whether to show all books or just the first 5 */
     showAll: {
       type: Boolean,
       default: true,

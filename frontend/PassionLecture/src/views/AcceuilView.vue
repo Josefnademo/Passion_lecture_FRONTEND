@@ -1,6 +1,7 @@
+<!-- Home view component template -->
 <template>
   <div class="accueil-container">
-    <!-- Title and description -->
+    <!-- Hero section with welcome message and site description -->
     <div class="hero-section">
       <h1>Welcome to your literary world</h1>
       <p class="site-description">
@@ -12,10 +13,10 @@
       </p>
     </div>
 
-    <!-- Books section -->
+    <!-- Books section with toggle functionality -->
     <section class="books-section">
       <h3 class="section-title">Latest Books</h3>
-      <!-- ShowAll -->
+      <!-- Toggle button to show/hide more books -->
       <div class="see-more-container">
         <button class="see-more-btn" @click="showAll = !showAll">
           {{ showAll ? 'See less' : 'See more' }}
@@ -28,24 +29,27 @@
 </template>
 
 <script setup>
-// We import the necessary functions
+// Vue composition API imports
 import { ref, onMounted } from 'vue'
+// Router import
 import { useRouter } from 'vue-router'
+// DisplayBooks component import
 import DisplayBooks from '../components/DisplayBooks.vue'
 
-// Initialize the router
+// Initialize router instance
 const router = useRouter()
 
-// Define the loading state and books array waitung for data to be loaded
+// Reactive state variables
+// Loading state for API calls
 const loading = ref(true)
+// Array to store books data
 const books = ref([])
-
-//showAll is a boolean that determines whether to show all books or just the first 5
+// Toggle state for showing all books
 const showAll = ref(false)
 
-// Book data loading from API
+// Lifecycle hook to fetch books when component mounts
 onMounted(async () => {
-  // Fetch books from API
+  // Fetch books from backend API
 
   try {
     const response = await fetch('http://localhost:9999/api/books')

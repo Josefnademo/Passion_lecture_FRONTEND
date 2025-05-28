@@ -174,7 +174,6 @@ export default {
         }
 
         const result = await response.json()
-        console.log('Update response:', result) // Debug log
 
         // Navigate regardless of success message format
         router.push('/my-books')

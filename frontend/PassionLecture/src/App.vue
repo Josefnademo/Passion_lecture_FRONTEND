@@ -1,20 +1,27 @@
+<!-- Root component template -->
 <template>
   <div id="app">
+    <!-- Header component -->
     <Header></Header>
+    <!-- Main content area with router view -->
     <main class="main-content">
       <RouterView />
     </main>
+    <!-- Footer component -->
     <Footer></Footer>
   </div>
 </template>
 
 <script>
+// Vue Router imports
 import { RouterLink, RouterView } from 'vue-router'
+// Components
 import Footer from './components/Footer.vue'
 import Header from './components/Header.vue'
 
 export default {
   name: 'App',
+  // Component registration
   components: {
     Header,
     Footer,
@@ -23,12 +30,14 @@ export default {
 </script>
 
 <style>
+/* App container styles */
 #app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* Main content area styles */
 .main-content {
   flex: 1;
   max-width: 4000px;
